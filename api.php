@@ -15,6 +15,7 @@ session_start();
 
 define("STATUS_BAD_REQUEST", "400 Bad Request");
 define("STATUS_SUCCESS", "200 OK");
+define("STATUS_UNAUTHORIZED", "401 Unauthorized");
 
 class APIResponce {
 	public $errors;
@@ -48,6 +49,7 @@ function performJSONRequest($jsonrequest) {
 			POSTRequest($request);
 			break;
 		case "UPDATE":
+			UPDATERequest($request);
 			break;
 		case "DELETE":
 			break;
@@ -87,6 +89,10 @@ function POSTRequest($request) {
 
 }
 
+/*
+ * Handles authentication and account status (as well as changed to notes if we
+ * allow it).
+ */
 function UPDATERequest($request) {
 }
 
@@ -95,6 +101,21 @@ function DELETERequest($request) {
 
 
 
+/***** MAIN *****/
+// Do initial session setup
+if (!isset($_SESSION['authenticated'])) {
+	$_SESSION['authenticated'] = false;
+	$errormessages[] = "Unauthenticated user";
+	$responce->status = STATUS_UNAUTHORIZED;
+}
+
+
 // API Result
 print json_encode($responce);	// TODO(sdsmith): Check return ?
 ?>
+
+
+
+
+
+

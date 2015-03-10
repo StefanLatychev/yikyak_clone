@@ -7,9 +7,9 @@
 
 <body>
 <script type="text/javascript">
-var STATUS_BAD_REQUEST_CODE = "400"
-var STATUS_SUCCESS_CODE = "200"
-
+var STATUS_BAD_REQUEST_CODE = "400";
+var STATUS_SUCCESS_CODE = "200";
+var STATUS_UNAUTHORIZED = "401";
 
 /*
  * Updates page information with the api responce.
@@ -43,11 +43,15 @@ function sendAPIRequest(api_request) {
 				case STATUS_SUCCESS_CODE:
 					// Request success
 					updatePage(responce);
+				case STATUS_UNAUTHORIZED:
+					// User needs to be authenticated
+					// TODO(sdsmith):
 				case STATUS_BAD_REQUEST_CODE:
 					// Bad request
-
+					// TODO(sdsmith):
 				default:
 					// Unknown status code
+					// TODO(sdsmith):
 			}
 		},
 		"json");
