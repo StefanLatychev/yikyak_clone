@@ -20,8 +20,8 @@ require_once("models/definitions.php")
 
 // Load available API operations
 require_once(APP_ROOT_PATH . "/models/api/GET.php");
+require_once(APP_ROOT_PATH . "/models/api/PUT.php");
 require_once(APP_ROOT_PATH . "/models/api/POST.php");
-require_once(APP_ROOT_PATH . "/models/api/UPDATE.php");
 require_once(APP_ROOT_PATH . "/models/api/DELETE.php");
 
 $errormessages = [];
@@ -48,11 +48,11 @@ function fulfillJSONRequest($jsonrequest) {
 		case "GET":
 			GETRequest($request);
 			break;
+		case "PUT":
+			PUTRequest($request);
+			break;
 		case "POST":
 			POSTRequest($request);
-			break;
-		case "UPDATE":
-			UPDATERequest($request);
 			break;
 		case "DELETE":
 			DELETERequest($request);
