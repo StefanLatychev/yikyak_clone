@@ -7,9 +7,9 @@ define("STATUS_SUCCESS", "200 OK");
 define("STATUS_UNAUTHORIZED", "401 Unauthorized");
 
 /*
- * APIResponce struct for sending responces to API requests.
+ * APIResponse struct for sending responses to API requests.
  */
-class APIResponce {
+class APIResponse {
 	public $errors;
 	public $status;
 	public $notes;

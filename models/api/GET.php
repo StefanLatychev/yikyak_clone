@@ -19,7 +19,7 @@ function GETRequest($request) {
 			
 		default:
 			$errormessages[] = "Unknown GET operation \'" . strtoupper($op_args[1]) . "\'";
-			$responce->status = STATUS_BAD_REQUEST;
+			$response->status = STATUS_BAD_REQUEST;
 	}
 }
 
@@ -45,10 +45,12 @@ function opNOTES($request) {
 			default:
 				// Unknown argument
 				$errormessages[] = "Unknown GET argument \'" . $op_args[$i] . "\'";
-				$responce->status = STATUS_BAD_REQUEST;
+				$response->status = STATUS_BAD_REQUEST;
+				return
 		}
 	}
 
 	// TODO(sdsmith): now query the database
+	
 }
 ?>

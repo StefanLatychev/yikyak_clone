@@ -25,21 +25,21 @@ require_once(APP_ROOT_PATH . "/models/api/POST.php");
 require_once(APP_ROOT_PATH . "/models/api/DELETE.php");
 
 $errormessages = [];
-$responce = new APIResponce();	// to be filled and sent to requester
+$response = new APIResponse();	// to be filled and sent to requester
 
 $jsonrequest = &$_REQUEST['request'];
 
 
 
 /*
- * Performs the requested operation and fills out the $responce object with
+ * Performs the requested operation and fills out the $response object with
  * appropriate values.
  */
 function fulfillJSONRequest($jsonrequest) {
 	// decode JSON request
 	if ($request = json_decode($jsonrequest, true)) {
 		$errormessages[] = "JSON decode failed";
-		$responce->status = STATUS_BAD_REQUEST;
+		$response->status = STATUS_BAD_REQUEST;
 		return;
 	}
 	
@@ -59,7 +59,7 @@ function fulfillJSONRequest($jsonrequest) {
 			break;
 		default:
 			$errormessages[] = "Invalid operation"
-			$responce->status = STATUS_BAD_REQUEST;
+			$response->status = STATUS_BAD_REQUEST;
 	}
 }
 
@@ -83,8 +83,8 @@ if (!isset($_SESSION['authenticated'])) {
 // they get sent STATUS_UNAUTHENTICATED so they know to send a login request.
 
 // API Result
-$responce->errors = $errormessages;
-print json_encode($responce);	// TODO(sdsmith): Check return ?
+$response->errors = $errormessages;
+print json_encode($response);	// TODO(sdsmith): Check return ?
 ?>
 
 
