@@ -6,7 +6,7 @@ define("APP_ROOT_PATH", dirname(__FILE__));
 session_save_path(APP_ROOT_PATH . "/sess");
 session_start();
 
-// TODO(sdsmith): Do I make the responce global?
+// TODO(sdsmith): check if running on https, and error if not.
 
 
 // Load constants
@@ -14,6 +14,12 @@ require_once("definitions.php")
 
 // Load available API operations
 require_once("authentication.php");
+
+
+
+http_response_code(STATUS_FORBIDDEN);	// http status is forbidden by default
+
+
 
 /*
  * Performs the requested operation and fills out the $response object with
@@ -35,7 +41,7 @@ function fulfillAPIRequest($api_url, $response_format) {
 			$responce = ;
 		default:
 			// Call to unknown api
-			// TODO(sdsmith):
+			http_status_code(STAUTS_NOT_IMPLEMENTED);
 	}
 
 	// Format output to requested type

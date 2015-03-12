@@ -2,7 +2,8 @@
 require_once("definitions.php");
 require_once("../database/authentication.php");
 
-
+// TODO(sdsmith): Set active session key expire time so that it can be removed 
+// from the db after a certain amount of time, invalidating the API key.
 
 /*
  * Generates session keys for use in authenticating users.
@@ -25,6 +26,7 @@ function generateSessionKey() {
  * Return response with session key on successful credential validation 
  * representing the authenticated user.
  * Only accepts username and password from POST requests.
+ * Sets an api_session_key cookie on user's system.
  */
 function apiLogin($request) {
 	$response = array();
@@ -38,22 +40,30 @@ function apiLogin($request) {
 
 	// Check if username and password provided
 	if (!isset($username) || !isset($password)) {
-		// TODO(sdsmith): improper credentials
+		http_status_code(STATUS_UNAUTHORIZED);
+		return $response;
 	}
 
 	// TODO(sdsmith): whitelist
-	// authenticate user
+
+	// Authenticate user
 	if (dbAuthenticateUser($username, $password)) {
-		// generate session key
+		// Generate session key
 		$session_key = generateSessionKey();
 
-		// register session key
+		// Register session key
 		dbInsertSessionKey($session_key);
-		$response['api_session_key'] = $session_key;
-		// TODO(sdsmith): finish the response
+		
+		// Set the API key as a cookie on the user's machine
+		// @param secure	indicates only send cookie over https
+		setcookie('api_session_key', $session_key, $secure=true);
+		
+		// Finish the response
+		http_status_code(STATUS_OK);
 		
 	} else {
-		// TODO(sdsmith): invalid credentials
+		// Invalid credentials
+		http_status_code(STATUS_UNAUTHORIZED);
 	}
 
 	return $response;
@@ -64,9 +74,11 @@ function apiLogin($request) {
 /*
  * Logs user out of API by invalidating their session key. Return true on
  * success, false otherwise.
+ * Invalidates user's api_session_kay cookie.
  */
 function apiLogout($request) {
-	$session_key = &$_REQUEST['api_session_key'];
+	$responce = array();
+	$session_key = &$_COOKIE['api_session_key'];
 
 	// Confirm there is no more to the request
 	if (sizeof($request) != 0) {
@@ -78,9 +90,18 @@ function apiLogout($request) {
 		// TODO(sdsmith): no session key
 	}
 
-	// TODO(sdsmith):
-	// unregister active session key
-	return dbRemoveSessionKey($session_key);
+	// Invalidate cookie from user
+	setcookie("api_session_key", "", time()-3600);
+
+	// Unregister active session key
+	if (dbRemoveSessionKey($session_key)) {
+		http_status_code(STATUS_OK);
+		return true;
+	} else {
+		// Database failed to remove session_key.
+		http_status_code(STATUS_INTERNAL_SERVER_ERROR);
+		return false;
+	}
 }
 
 
@@ -101,6 +122,7 @@ function apiAuthentication($request) {
 
 		default:
 			// TODO(sdsmith): unsupported operation
+			http_status_code(STAUTS_NOT_IMPLEMENTED);
 	}
 
 	return $response;
