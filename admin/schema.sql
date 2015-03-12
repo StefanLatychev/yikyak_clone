@@ -5,6 +5,8 @@ DROP TABLE appuser_passwords CASCADE;
 DROP TABLE notes CASCADE;
 DROP TABLE notes_reported CASCADE;
 
+
+
 CREATE TABLE active_api_session_keys (
 	-- Active API session keys representing authenticated api users
 	session_key		VARCHAR(25),
@@ -34,11 +36,11 @@ CREATE TABLE appuser (
 CREATE TABLE notes (
 	-- Yak information
 	id			BIGSERIAL,
-	userid			BIGINT		NOT NULL,	--Posted by
+	user_id			BIGINT		NOT NULL,	--Posted by
 	time			TIMESTAMP	NOT NULL,	--Time posted
 	location_latitude	REAL		NOT NULL,
 	location_longitude	REAL		NOT NULL,
-	upvotes			INTEGER		NOT NULL,	--Note 'rating'
+	votes			INTEGER		NOT NULL,	--Note 'rating'
 	message			TEXT		NOT NULL,
 	PRIMARY KEY (id)
 );
@@ -49,5 +51,14 @@ CREATE TABLE notes_reported (
 	note_id			BIGINT		NOT NULL,
 	user_id			BIGINT		NOT NULL,	--Reporter id
 	reason			TEXT		NOT NULL,	--Report reason
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE notes_votes (
+	-- Tracks users votes on notes
+	id			BIGSERIAL,
+	note_id			BIGINT		NOT NULL,
+	user_id			BIGINT		NOT NULL,
+	upvote			BOOLEAN		NOT NULL,	--1 up, 0 down
 	PRIMARY KEY (id)
 );
