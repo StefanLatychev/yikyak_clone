@@ -27,8 +27,12 @@ function fulfillAPIRequest($api_url, $response_format) {
 
 	// Check which API call is being made
 	switch($request[0]) {	// NOTE(sdsmith): Check if url will start with api or with the category
-		case "authentication":
+		case 'authentication':
 			$responce = apiAuthentication($subrequest);
+		case 'user':
+			$responce = ;
+		case 'notes':
+			$responce = ;
 		default:
 			// Call to unknown api
 			// TODO(sdsmith):
