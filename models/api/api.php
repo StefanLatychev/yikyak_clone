@@ -10,10 +10,10 @@ session_start();
 
 
 // Load constants
-require_once("../definitions.php")
+require_once("definitions.php")
 
 // Load available API operations
-
+require_once("authentication.php");
 
 /*
  * Performs the requested operation and fills out the $response object with

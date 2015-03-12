@@ -15,7 +15,7 @@ CREATE TABLE active_api_session_keys (
 CREATE TABLE appuser_passwords (
 	-- User passwords
 	user_id 		BIGINT,
-	password 		VARCHAR(50) 	NOT NULL,
+	password 		VARCHAR(100) 	NOT NULL,
 	PRIMARY KEY (userid)
 );
 
@@ -25,9 +25,9 @@ CREATE TABLE appuser (
 	admin			BOOLEAN		NOT NULL,
 	email 			VARCHAR(50) 	NOT NULL UNIQUE, 
 	phone_number		VARCHAR(15)	UNIQUE,
-	joindate 		TIMESTAMP 	NOT NULL,
+	join_date 		TIMESTAMP 	NOT NULL,
 	validated 		BOOLEAN 	NOT NULL,
-	lastlogin 		TIMESTAMP 	NOT NULL,
+	last_login 		TIMESTAMP 	NOT NULL,
 	PRIMARY KEY (id)
 );
 
