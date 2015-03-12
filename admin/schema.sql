@@ -5,6 +5,12 @@ DROP TABLE appuser_passwords CASCADE;
 DROP TABLE notes CASCADE;
 DROP TABLE notes_reported CASCADE;
 
+CREATE TABLE active_api_session_keys (
+	-- Active API session keys representing authenticated api users
+	session_key		VARCHAR(25),
+	user_id			BIGINT,
+	PRIMARY KEY(session_key);
+);
 
 CREATE TABLE appuser_passwords (
 	-- User passwords
@@ -16,6 +22,7 @@ CREATE TABLE appuser_passwords (
 CREATE TABLE appuser (
 	-- User data
 	id 			BIGSERIAL,
+	admin			BOOLEAN		NOT NULL,
 	email 			VARCHAR(50) 	NOT NULL UNIQUE, 
 	phone_number		VARCHAR(15)	UNIQUE,
 	joindate 		TIMESTAMP 	NOT NULL,
