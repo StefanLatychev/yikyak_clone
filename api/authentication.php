@@ -1,6 +1,6 @@
 <?php
 require_once("definitions.php");
-require_once("../database/authentication.php");
+require_once("../models/database/authentication.php");
 
 // TODO(sdsmith): Set active session key expire time so that it can be removed 
 // from the db after a certain amount of time, invalidating the API key.
