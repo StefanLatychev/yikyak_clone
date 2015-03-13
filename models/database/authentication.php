@@ -9,14 +9,15 @@ require_once("postgres.php");
  */
 function dbInsertSessionKey($session_key, $user_id) {
 	$dbconn = dbConnect();
-	
+	$success = false;
+
 	$prepare_ret = pg_prepare($dbconn, 'insert_session_key', 'INSERT INTO active_api_session_keys (session_key, user_id) VALUES ($1, $2)');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_session_key', array($session_key, $user_id));
 		if ($resultobj) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				return true;
+				$success = true;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -26,7 +27,7 @@ function dbInsertSessionKey($session_key, $user_id) {
 	}
 
 	dbClose($dbconn);
-	return false;
+	return $success;
 }
 
 
@@ -37,6 +38,7 @@ function dbInsertSessionKey($session_key, $user_id) {
  */
 function dbRemoveSessionKey($session_key) {
 	$dbconn = dbConnect();
+	$success = false;
 	
 	$prepare_ret = pg_prepare($dbconn, 'delete_session_key', 'DELETE FROM active_api_session_keys WHERE session_key = $1');
 	if ($prepare_ret) {
@@ -44,7 +46,7 @@ function dbRemoveSessionKey($session_key) {
 		if ($resultobj) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array && $result_as_array[1] >= 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				return true;
+				$success = true;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -54,7 +56,7 @@ function dbRemoveSessionKey($session_key) {
 	}
 
 	dbClose($dbconn);
-	return false;
+	return $success;
 }
 
 
@@ -64,6 +66,7 @@ function dbRemoveSessionKey($session_key) {
  */
 function dbIsActiveSessionKey($session_key) {
 	$dbconn = dbConnect();
+	$result = false;
 	
 	$prepare_ret = pg_prepare($dbconn, 'check_active_session_key', 'SELECT * FROM active_session_keys WHERE session_key = $1');
 	if ($prepare_ret) {
@@ -79,7 +82,7 @@ function dbIsActiveSessionKey($session_key) {
 					die("Two session keys with the same name!!");
 				}
 			
-				return true;
+				$result = true;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -89,7 +92,7 @@ function dbIsActiveSessionKey($session_key) {
 	}
 
 	dbClose($dbconn);
-	return false;
+	return $result;
 }
 
 
@@ -99,6 +102,7 @@ function dbIsActiveSessionKey($session_key) {
  */
 function dbGetActiveUserSessionKeys($user_id) {
 	$dbconn = dbConnect();
+	$result = null;
 	
 	$prepare_ret = pg_prepare($dbconn, 'get_active_user_id_session_keys', 'SELECT * FROM active_session_keys WHERE user_id = $1');
 	if ($prepare_ret) {
@@ -106,7 +110,7 @@ function dbGetActiveUserSessionKeys($user_id) {
 		if ($resultobj) {
 			$full_result_as_array = pg_fetch_all($resultobj);
 			if ($full_result_as_array) {
-				return $full_result_as_array;
+				$result = $full_result_as_array;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -116,18 +120,19 @@ function dbGetActiveUserSessionKeys($user_id) {
 	}
 
 	dbClose($dbconn);
-	return false;
+	return $result;
 }
 
 
 
 /*
 * Authenticates the given user/password with the database. Return array of
-* user data from 'appuser' corresponding to the authenticated user, or false
+* user data from 'appuser' corresponding to the authenticated user, or null
 * on fail.
 */
 function dbAuthenticateUser($username, $password) {
 	$dbconn = dbConnect();
+	$result = null;
 	
 	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT * FROM appuser, appuser_passwords WHERE appuser.name = $1 and appuser_passwords.password = $2');
 	if ($prepare_ret) {
@@ -144,7 +149,7 @@ function dbAuthenticateUser($username, $password) {
 				}
 	
 				// Properly authenticated
-				return $autheduserdata;
+				$result = $autheduserdata;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -154,7 +159,7 @@ function dbAuthenticateUser($username, $password) {
 	}
 
 	dbClose($dbconn);
-	return false;
+	return $result;
 }
 
 
