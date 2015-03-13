@@ -129,7 +129,26 @@ function dbInsertNote($user_id, $latitude, $longitude, $note) {
  * Insert a user's vote on a particular note into the database.
  */
 function dbInsertVote($note_id, $user_id, $isUpvote) {
-	// TODO(sdsmith):
+	$dbconn = dbConnect();
+	$success = false;
+
+	$prepare_ret = pg_prepare($dbconn, 'insert_vote', 'INSERT INTO notes_votes (note_id, user_id, upvote) VALUES ($1, $2, $3)');
+	if ($prepare_ret) {
+		$resultobj = pg_execute($dbconn, 'insert_vote', array($note_id, $user_id, $isUpvote));
+		if ($resultobj) {
+			$result_as_array = pg_fetch_array($resultobj);
+			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
+				$success = true;
+			}
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+	return $success;
 }
 
 
@@ -138,7 +157,7 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
  * Return true if the given user has voted on the given note, false otherwise.
  */
 function dbHasVotedOnNote($note_id, $user_id) {
-	
+	// TODO(sdsmith):
 }
 
 
@@ -146,14 +165,34 @@ function dbHasVotedOnNote($note_id, $user_id) {
 /*
  * Insert a user's report for the given note.
  */
-function dbInsertReport($note_id, $user_id, $reason) {
-	// TODO(sdsmith):
+function dbInsertReport($note_id, $reporter_id, $reason) {
+	$dbconn = dbConnect();
+	$success = false;
+	$timestamp = date('Y-m-d H:i:s');
+
+	$prepare_ret = pg_prepare($dbconn, 'insert_report', 'INSERT INTO notes_reported (note_id, reporter_id, time, reason) VALUES ($1, $2, $3, $4)');
+	if ($prepare_ret) {
+		$resultobj = pg_execute($dbconn, 'insert_report', array($note_id, $reporter_id, $timestamp, $reason));
+		if ($resultobj) {
+			$result_as_array = pg_fetch_array($resultobj);
+			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
+				$success = true;
+			}
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+	return $success;
 }
 
 
 
 /*
- * Removes given note from the database. User id must be provided so ther is a
+ * Removes given note from the database. User id must be provided so there is a
  * record of who deleted it.
  */
 function dbRemoveNote($note_id, $user_id) {
