@@ -62,11 +62,12 @@ function dbRemoveSessionKey($session_key) {
 
 
 /*
- * Return true id given session key is active, false otherwise.
+ * Return row associated with the given session key if it is active, null 
+ * otherwise.
  */
 function dbIsActiveSessionKey($session_key) {
 	$dbconn = dbConnect();
-	$result = false;
+	$result = null;
 	
 	$prepare_ret = pg_prepare($dbconn, 'check_active_session_key', 'SELECT * FROM active_session_keys WHERE session_key = $1');
 	if ($prepare_ret) {
@@ -75,14 +76,13 @@ function dbIsActiveSessionKey($session_key) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array) {
 				// There was a result, so we matched
+				$result = $result_as_array;
 
 				// Sanity check: confirm there was only one session key match
 				if ($result_as_array = pg_fetch_array($resultobj)) {
 					// NOTE(sdsmith): should never happen as the session key is the primary key
 					die("Two session keys with the same name!!");
-				}
-			
-				$result = true;
+				}			
 			}
 		} else {
 			die("Query failed: " . pg_last_error());

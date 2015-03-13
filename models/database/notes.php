@@ -139,6 +139,7 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
 				$success = true;
+				// TODO(sdsmith): update vote count for corresponding note
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
