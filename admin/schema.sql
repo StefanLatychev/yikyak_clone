@@ -4,7 +4,7 @@ DROP TABLE active_api_session_keys CASCADE;
 DROP TABLE appuser CASCADE;
 DROP TABLE appuser_passwords CASCADE;
 DROP TABLE notes CASCADE;
-DROP TABLE notes_reported CASCADE;
+DROP TABLE notes_reports CASCADE;
 DROP TABLE notes_votes CASCADE;
 
 
@@ -47,11 +47,12 @@ CREATE TABLE notes (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE notes_reported (
+CREATE TABLE notes_reports (
 	-- User reported notes
 	id			BIGSERIAL,
 	note_id			BIGINT		NOT NULL,
-	user_id			BIGINT		NOT NULL,	--Reporter id
+	reporter_id		BIGINT		NOT NULL,	--is a user_id
+	time			TIMESTAMP	NOT NULL,	--Time reported
 	reason			TEXT		NOT NULL,	--Report reason
 	PRIMARY KEY (id)
 );
