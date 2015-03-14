@@ -34,8 +34,8 @@ function getAPIResponseTemplate() {
  * 62^SESSION_KEY_LENGTH possibilities.
  */
 function generateSessionKey() {
-	$valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-	$valid_chars_max_index = sizeof($valid_chars) -1 ;
+	$valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	$valid_chars_max_index = strlen($valid_chars) - 1;
 	$session_key = '';
 
 	for ($n = 0; $n < SESSION_KEY_LENGTH; $n += 1) {

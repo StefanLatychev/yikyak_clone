@@ -28,7 +28,8 @@ function apiLogin($request_vars) {
 
 	// Check if username and password provided
 	if (!isset($request['email']) || !isset($request['password'])) {
-		http_status_code(STATUS_UNAUTHORIZED);
+		$response['errors'][] = 'Full credentials not provided';
+		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
 	}
 
@@ -73,7 +74,7 @@ function apiLogout($request_vars) {
 	// Confirm session key is provided
 	if (!isset($session_key)) {
 		// No session key
-		$response['errors'] = "Not logged in; cannot logout";
+		$response['errors'][] = "Not logged in; cannot logout";
 		$response['status'] = STATUS_BAD_REQUEST;
 	}
 
@@ -85,7 +86,7 @@ function apiLogout($request_vars) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Database failed to remove session_key.
-		$response['errors'] = "Failed to logout";
+		$response['errors'][] = "Failed to logout";
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
 
@@ -119,8 +120,8 @@ switch($_SERVER['REQUEST_METHOD']) {
 
 	default:
 		// TODO(sdsmith): bad request
-		http_status_code(STATUS_BAD_REQUEST);
-		die('Bad HTTP resquest type');
+		$response['errors'][] = 'HTTP request type not accepted';
+		$response['status'] = STATUS_BAD_REQUEST);
 }
 
 
