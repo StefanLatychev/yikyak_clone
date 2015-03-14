@@ -69,7 +69,8 @@ function apiLogin($request_vars) {
  */
 function apiLogout() {
 	$response = getAPIResponseTemplate();
-	$session_key = getRequesterAPISessionKey;
+	$session_key = getRequesterAPISessionKey();
+	var_dump($session_key);
 
 	// Confirm session key is provided
 	if (!isset($session_key)) {
