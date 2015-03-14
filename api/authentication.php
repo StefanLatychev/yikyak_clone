@@ -5,21 +5,8 @@ require_once("../models/database/authentication.php");
 // TODO(sdsmith): Set active session key expire time so that it can be removed 
 // from the db after a certain amount of time, invalidating the API key.
 
-/*
- * Generates session keys for use in authenticating users.
- * 62^SESSION_KEY_LENGTH possibilities.
- */
-function generateSessionKey() {
-	$valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-	$valid_chars_max_index = sizeof($valid_chars) -1 ;
-	$session_key = '';
+// TODO(sdsmith): Have db send error messages to the response['errors'] var
 
-	for ($n = 0; $n < SESSION_KEY_LENGTH; $n += 1) {
-		$session_key .= $valid_chars[mt_rand(0, $valid_chars_max_index)];
-	}
-
-	return $session_key;
-}
 
 
 /*
@@ -28,18 +15,19 @@ function generateSessionKey() {
  * Only accepts username and password from POST requests.
  * Sets an api_session_key cookie on user's system.
  */
-function apiLogin($request) {
-	$response = array();
-	$username = &$_POST['username'];
-	$password = &$_POST['password'];
+function apiLogin($request_vars) {
+	$response = getAPIResponseTemplate();
 
-	// Confirm there is no more to the request
-	if (sizeof($request) != 0) {
-		// TODO(sdsmith): bad request
+	// NOTE(sdsmith): makes the assumption it's a json request
+	$request = json_decode($request_vars['request']);
+	if (!$request) {
+		$response['errors'][] = "Bad JSON format: " . json_last_error();
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
 	}
 
 	// Check if username and password provided
-	if (!isset($username) || !isset($password)) {
+	if (!isset($request->) || !isset($password)) {
 		http_status_code(STATUS_UNAUTHORIZED);
 		return $response;
 	}
@@ -47,7 +35,8 @@ function apiLogin($request) {
 	// TODO(sdsmith): whitelist
 
 	// Authenticate user
-	if (dbAuthenticateUser($username, $password)) {
+	// TODO(sdsmith): make dbAuthenticateUser use email instead!
+	if (dbAuthenticateUser($request['email'], $request['password'])) {
 		// Generate session key
 		$session_key = generateSessionKey();
 
@@ -58,12 +47,13 @@ function apiLogin($request) {
 		// @param secure	indicates only send cookie over https
 		setcookie('api_session_key', $session_key, $secure=true);
 		
-		// Finish the response
-		http_status_code(STATUS_OK);
+		// Completed request
+		$response['status'] = STATUS_OK;
 		
 	} else {
 		// Invalid credentials
-		http_status_code(STATUS_UNAUTHORIZED);
+		$response['errors'][] = "Invalid credentials";
+		$response['status'] = STATUS_UNAUTHORIZED;
 	}
 
 	return $response;
@@ -71,23 +61,20 @@ function apiLogin($request) {
 
 
 
-/*
- * Logs user out of API by invalidating their session key. Return true on
- * success, false otherwise.
- * Invalidates user's api_session_kay cookie.
+/* 
+ * Logs user out of API by invalidating their session key. Return response
+ * object.
+ * Invalidates user's api_session_key cookie.
  */
-function apiLogout($request) {
-	$responce = array();
-	$session_key = &$_COOKIE['api_session_key'];
-
-	// Confirm there is no more to the request
-	if (sizeof($request) != 0) {
-		// TODO(sdsmith): Bad request
-	}
+function apiLogout($request_vars) {
+	$response = getAPIResponseTemplate();
+	$session_key = getRequesterAPISessionKey;
 
 	// Confirm session key is provided
 	if (!isset($session_key)) {
-		// TODO(sdsmith): no session key
+		// No session key
+		$response['errors'] = "Not logged in; cannot logout";
+		$response['status'] = STATUS_BAD_REQUEST;
 	}
 
 	// Invalidate cookie from user
@@ -95,37 +82,76 @@ function apiLogout($request) {
 
 	// Unregister active session key
 	if (dbRemoveSessionKey($session_key)) {
-		http_status_code(STATUS_OK);
-		return true;
+		$response['status'] = STATUS_OK;
 	} else {
 		// Database failed to remove session_key.
-		http_status_code(STATUS_INTERNAL_SERVER_ERROR);
-		return false;
-	}
-}
-
-
-
-/*
- * Determines what authentication API is being requested and performs it.
- */
-function apiAuthentication($request) {
-	$subrequest = array_slice($request, 1);
-	$response = null;
-
-	switch ($request[0]) {
-		case "login":
-			$response = apiLogin($subrequest);
-
-		case "logout":
-			$response = apiLogout($subrequest);
-
-		default:
-			// TODO(sdsmith): unsupported operation
-			http_status_code(STAUTS_NOT_IMPLEMENTED);
+		$response['errors'] = "Failed to logout";
+		$response['status'] = STATUS_INTERNAL_SERVER_ERROR);
 	}
 
 	return $response;
 }
+
+
+
+
+/***** MAIN *****/
+// Check if the connection is HTTPS
+if (!$_SERVER['HTTPS']) {
+	die("Connection must be over HTTPS");
+}
+
+
+// Decode HTTP request type and get request parameters
+$REQUEST_VARS = null;
+$response = null;
+switch($_SERVER['REQUEST_METHOD']) {
+	case 'POST':
+		$REQUEST_VARS = &$_POST;
+		$response = apiLogin(&$REQUEST_VARS);
+		break;
+
+	case 'DELETE':
+		// http://www.lornajane.net/posts/2008/Accessing-Incoming-PUT-Data-from-PHP
+		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		$response = apiLogout(&$REQUEST_VARS);
+		break;
+
+	default:
+		// TODO(sdsmith): bad request
+		http_status_code(STATUS_BAD_REQUEST);
+		die('Bad HTTP resquest type');
+}
+
+
+// Send response to requester
+// NOTE(sdsmith): assumes the response format is JSON
+print json_encode($response);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
