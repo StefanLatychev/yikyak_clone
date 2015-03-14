@@ -12,4 +12,18 @@ define("STATUS_NOT_IMPLEMENTED", "501");
 
 // Session key
 define("SESSION_KEY_LENGTH", 25);
+
+/*
+ * Return API response associative array with default parameters initialized.
+ */
+function getAPIResponseTemplate() {
+	$responce_template = array();
+
+	$response_template['errors'] = array();
+	$response_template['status'] = null;
+
+	return $response_template;
+}
+
+
 ?>
