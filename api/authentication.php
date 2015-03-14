@@ -27,7 +27,7 @@ function apiLogin($request_vars) {
 	}
 
 	// Check if username and password provided
-	if (!isset($request->) || !isset($password)) {
+	if (!isset($request['email']) || !isset($request['password']) {
 		http_status_code(STATUS_UNAUTHORIZED);
 		return $response;
 	}
