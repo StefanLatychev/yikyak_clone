@@ -65,7 +65,7 @@ function dbRemoveSessionKey($session_key) {
  * Return row associated with the given session key if it is active, null 
  * otherwise.
  */
-function dbIsActiveSessionKey($session_key) {
+function dbActiveSessionKey($session_key) {
 	$dbconn = dbConnect();
 	$result = null;
 	
@@ -126,15 +126,15 @@ function dbGetActiveUserSessionKeys($user_id) {
 
 
 /*
-* Authenticates the given user/password with the database. Return array of
-* user data from 'appuser' corresponding to the authenticated user, or null
-* on fail.
-*/
-function dbAuthenticateUser($username, $password) {
+ * Authenticates the given user/password with the database. Return array of
+ * user data from 'appuser' corresponding to the authenticated user, or null
+ * on fail.
+ */
+function dbAuthenticateUser($email, $password) {
 	$dbconn = dbConnect();
 	$result = null;
 	
-	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT * FROM appuser, appuser_passwords WHERE appuser.name = $1 and appuser_passwords.password = $2');
+	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT * FROM appuser, appuser_passwords WHERE appuser.email = $1 and appuser_passwords.password = $2');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, "credential_check", array($username, $password));
 		if ($resultobj) {

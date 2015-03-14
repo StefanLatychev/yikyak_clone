@@ -6,7 +6,7 @@
  * Insert user into the database. Return true on successful insert, false 
  * otherwise.
  */
-function dbRegisterNewUser($isAdmin, $email, $phoneNumber $password) {
+function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 	$insert_status = false;
 	$dbconn = dbConnect();
 
@@ -64,5 +64,13 @@ function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=nu
 
 	dbClose($dbconn);
 	return $insert_status;
+}
+
+
+/*
+ *
+ */
+function dbGetUserInfo($user_id) {
+	// TODO(sdsmith):
 }
 ?>
