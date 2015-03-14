@@ -13,7 +13,7 @@ CREATE TABLE active_api_session_keys (
 	-- Active API session keys representing authenticated api users
 	session_key		VARCHAR(25),
 	user_id			BIGINT		NOT NULL,
-	PRIMARY KEY(session_key);
+	PRIMARY KEY(session_key)
 );
 
 CREATE TABLE appuser_passwords (

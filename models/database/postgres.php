@@ -9,7 +9,7 @@
 * Return a connection to the database.
 */
 function dbConnect() {
-	$dbconn = pg_connect("host= dbname= user= password=");
+	$dbconn = pg_connect("host=localhost dbname=smiths61 user=smiths61 password=59882");
 	if ($dbconn) {
 		return $dbconn;
 	}
