@@ -27,7 +27,7 @@ function apiLogin($request_vars) {
 	}
 
 	// Check if username and password provided
-	if (!isset($request['email']) || !isset($request['password'])) {
+	if (!isset($request->email) || !isset($request->password)) {
 		$response['errors'][] = 'Full credentials not provided';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
@@ -37,7 +37,7 @@ function apiLogin($request_vars) {
 
 	// Authenticate user
 	// TODO(sdsmith): make dbAuthenticateUser use email instead!
-	if (dbAuthenticateUser($request['email'], $request['password'])) {
+	if (dbAuthenticateUser($request->email, $request->password)) {
 		// Generate session key
 		$session_key = generateSessionKey();
 
@@ -67,7 +67,7 @@ function apiLogin($request_vars) {
  * object.
  * Invalidates user's api_session_key cookie.
  */
-function apiLogout($request_vars) {
+function apiLogout() {
 	$response = getAPIResponseTemplate();
 	$session_key = getRequesterAPISessionKey;
 
@@ -115,7 +115,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'DELETE':
 		// http://www.lornajane.net/posts/2008/Accessing-Incoming-PUT-Data-from-PHP
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
-		$response = apiLogout(&$REQUEST_VARS);
+		$response = apiLogout();
 		break;
 
 	default:
