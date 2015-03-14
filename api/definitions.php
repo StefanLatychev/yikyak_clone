@@ -1,4 +1,6 @@
 <?php
+require_once('../models/database/authentication.php');
+
 /***** Definitions *****/
 
 // Request status codes
@@ -28,6 +30,22 @@ function getAPIResponseTemplate() {
 }
 
 
+/*
+ * Return true if the requesting user is authenticated, false otherwise. If 
+ * $response is provided and the user is not authenticated, response status and 
+ * error messages will be filled out appropriately.
+ */
+function isAuthenticated($response=null) {
+	$authed = dbActiveSessionKey(getRequesterAPISessionKey());
+	
+	if (!$authed && $response) {
+		$response['errors'][] = 'Not authenticated';
+		$response['status'] = STATUS_UNAUTHORIZED;
+	}
+
+	return $authed;
+}
+
 
 /*
  * Generates session keys for use in authenticating users.
@@ -53,4 +71,44 @@ function generateSessionKey() {
 function getRequesterAPISessionKey() {
 	return $_COOKIE['api_session_key'];
 }
+
+
+
+/*
+ * Decodes json object. Return stdClass object representing json object on 
+ * success, null otherwise. If there is an error, $responce will be populated 
+ * with the appropriate status and error messages if provided.
+ * 
+ * @param json_encoded_object	object in JSON format to decode
+ * @param response		APIResponceTemplate object to be populated on
+ *				error if provided.
+ */
+function requestDecodeJSON($json_encoded_object, $response=null) {
+	$request = json_decode($encoded_request);
+
+	if (!$request && $response) {
+		$response['errors'][] = "Bad JSON format: " . json_last_error();
+		$response['status'] = STATUS_BAD_REQUEST;
+	}
+
+	return $request;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ?>

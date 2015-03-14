@@ -15,14 +15,12 @@ require_once("../models/database/authentication.php");
  * Only accepts username and password from POST requests.
  * Sets an api_session_key cookie on user's system.
  */
-function apiLogin($request_vars) {
+function apiLogin($encoded_request) {
 	$response = getAPIResponseTemplate();
 
+	// Decode request
 	// NOTE(sdsmith): makes the assumption it's a json request
-	$request = json_decode($request_vars['request']);
-	if (!$request) {
-		$response['errors'][] = "Bad JSON format: " . json_last_error();
-		$response['status'] = STATUS_BAD_REQUEST;
+	if (!$request = requestDecodeJSON($encoded_request, $response)) {
 		return $response;
 	}
 
@@ -36,18 +34,21 @@ function apiLogin($request_vars) {
 	// TODO(sdsmith): whitelist
 
 	// Authenticate user
-	// TODO(sdsmith): make dbAuthenticateUser use email instead!
-	if (dbAuthenticateUser($request->email, $request->password)) {
+	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
 		// Generate session key
 		$session_key = generateSessionKey();
 
 		// Register session key
-		dbInsertSessionKey($session_key);
+		dbInsertSessionKey($session_key, $user_info['id']);
 		
 		// Set the API key as a cookie on the user's machine
 		// @param secure	indicates only send cookie over https
 		setcookie('api_session_key', $session_key, $secure=true);
-		
+
+		// Update last login time
+		dbUpdateLastLoginTime($user_info['i']);
+			
+
 		// Completed request
 		$response['status'] = STATUS_OK;
 		
@@ -109,7 +110,7 @@ $response = null;
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		$REQUEST_VARS = &$_POST;
-		$response = apiLogin(&$REQUEST_VARS);
+		$response = apiLogin(&$REQUEST_VARS['request']);
 		break;
 
 	case 'DELETE':
@@ -119,7 +120,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 		break;
 
 	default:
-		// TODO(sdsmith): bad request
+		// Bad request
 		$response['errors'][] = 'HTTP request type not accepted';
 		$response['status'] = STATUS_BAD_REQUEST;
 }
