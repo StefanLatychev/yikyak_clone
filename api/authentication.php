@@ -86,7 +86,7 @@ function apiLogout($request_vars) {
 	} else {
 		// Database failed to remove session_key.
 		$response['errors'] = "Failed to logout";
-		$response['status'] = STATUS_INTERNAL_SERVER_ERROR);
+		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
 
 	return $response;
