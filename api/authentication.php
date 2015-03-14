@@ -121,7 +121,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	default:
 		// TODO(sdsmith): bad request
 		$response['errors'][] = 'HTTP request type not accepted';
-		$response['status'] = STATUS_BAD_REQUEST);
+		$response['status'] = STATUS_BAD_REQUEST;
 }
 
 
