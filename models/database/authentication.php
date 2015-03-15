@@ -68,7 +68,7 @@ function dbActiveSessionKey($session_key) {
 	$dbconn = dbConnect();
 	$result = null;
 	
-	$prepare_ret = pg_prepare($dbconn, 'check_active_session_key', 'SELECT * FROM active_session_keys WHERE session_key = $1');
+	$prepare_ret = pg_prepare($dbconn, 'check_active_session_key', 'SELECT * FROM active_api_session_keys WHERE session_key = $1');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'check_active_session_key', array($session_key));
 		if ($resultobj) {
