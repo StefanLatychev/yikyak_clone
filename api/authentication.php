@@ -71,13 +71,11 @@ function apiLogin($encoded_request) {
  */
 function apiLogout() {
 	$response = getAPIResponseTemplate();
-	$session_key = getRequesterAPISessionKey();
+	$session_key = getRequesterAPISessionKey($response);
 
 	// Confirm session key is provided
-	if (!isset($session_key)) {
-		// No session key
-		$response['errors'][] = "Not logged in; cannot logout";
-		$response['status'] = STATUS_BAD_REQUEST;
+	if ($session_key) {
+		return $response;
 	}
 
 	// Invalidate cookie from user
