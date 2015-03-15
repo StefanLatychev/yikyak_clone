@@ -96,7 +96,13 @@ function requestDecodeJSON($json_encoded_object, $response=null) {
 
 
 
-
+/*
+ * Return given timestamp (with timezone) converted to a UTC timestamp (without 
+ * timezone), and null otherwise. If there is an error, $response will be 
+ * populated with the appropriate status and error messages if provided.
+ */
+function convertUTCTimestamp($timezone_timestamp, $response) {
+}
 
 
 
