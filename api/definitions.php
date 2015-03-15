@@ -35,8 +35,16 @@ function getAPIResponseTemplate() {
  * $response is provided and the user is not authenticated, response status and 
  * error messages will be filled out appropriately.
  */
-function isAuthenticated($response=null) {
-	$authed = dbActiveSessionKey(getRequesterAPISessionKey());
+function isAuthenticated(&$response=null) {
+	$authed = false;
+
+	// Get user session key
+	if (!getRequesterAPISessionKey($response)) {
+		return $false
+	}
+
+	// Check if active key
+	$authed = dbActiveSessionKey();
 	
 	if (!$authed && $response) {
 		$response['errors'][] = 'Not authenticated';
@@ -68,8 +76,17 @@ function generateSessionKey() {
 /*
  * Return current requester's API session key.
  */
-function getRequesterAPISessionKey() {
-	return $_COOKIE['api_session_key'];
+function getRequesterAPISessionKey(&$response=null) {
+	$session_key = null;
+
+	if (isset($_COOKIE['api_session_key'])) {
+		$session_key = $_COOKIE['api_session_key'];
+	} else if ($response) {
+		// Cookie not provided, reporting
+		$response['errors'][] = 'Authentication cookie not provided. Have you logged in?'
+		$response['status'] = STATUS_UNAUTHORIZED;
+	}
+	return $session_key;
 }
 
 
@@ -101,7 +118,7 @@ function requestDecodeJSON($json_encoded_object, &$response=null) {
  * timezone), and null otherwise. If there is an error, $response will be 
  * populated with the appropriate status and error messages if provided.
  */
-function convertUTCTimestamp($timezone_timestamp, &$response) {
+function convertUTCTimestamp($timezone_timestamp, &$response=null) {
 }
 
 
