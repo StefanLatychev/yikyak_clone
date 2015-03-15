@@ -6,70 +6,138 @@
 </head>
 
 <body>
-<script type="text/javascript">
-// HTTP Status codes
-var STATUS_OK = 200");
-var STATUS_BAD_REQUEST = 400;
-var STATUS_UNAUTHORIZED = 401;
-var STATUS_FORBIDDEN = 403;
-var STATUS_REQUEST-URI_TOO_LONG = 414;
-var STATUS_INTERNAL_SERVER_ERROR = 500;
-var STATUS_NOT_IMPLEMENTED = 501;
 
+	<!-- jQuery include -->
+	<script language="javascript" src="static/jquery-2.1.3.js"></script>
+	
 
+	<script type="text/javascript">
 
-/*
- * Sends AJAX request to back-end and actions appropriately based on responce 
- * status code.
- */
-function sendAPIRequest(	api_request_url, 
-				http_request_method, 
-				encoded_request_payload, 
-				callback_func) {
+	// HTTP Status codes
+	var STATUS_OK = 200;
+	var STATUS_BAD_REQUEST = 400;
+	var STATUS_UNAUTHORIZED = 401;
+	var STATUS_FORBIDDEN = 403;
+	var STATUS_REQUEST-URI_TOO_LONG = 414;
+	var STATUS_INTERNAL_SERVER_ERROR = 500;
+	var STATUS_NOT_IMPLEMENTED = 501;
 
-	var request = $.ajax({
+	$("display").hide();
+	$("login").show();
+
+	/*
+	 * Sends AJAX request to back-end and actions appropriately based on responce 
+	 * status code.
+	 */
+	function sendAPIRequest(
+		api_request_url, 
+		http_request_method, 
+		encoded_request_payload, 
+		callback_func) {
+
+			var request = $.ajax({
 				url: api_request_url,
 				type: http_request_method,
 				data: {request : encoded_request_payload},
 				success: function(result) {
 					// decode result (it is in json format)
 
-					// perform something
-					// TODO():
-
-					// call my callback					
-					callback_func();	// TODO(): set generic parameters
+					result_object = JSON.parse(result);
+					switch(result_object.status.split[0]){
+						case STATUS_OK:
+							//Callback function goes here
+							callback_func();
+						case STATUS_BAD_REQUEST:
+							//Display info
+						case STATUS_UNAUTHORIZED:
+							//Display info
+						case STATUS_FORBIDDEN:
+							//Display info
+						case STATUS_REQUEST-URI_TOO_LONG:
+							//Display info
+						case STATUS_INTERNAL_SERVER_ERROR:
+							//Display info
+						case STATUS_NOT_IMPLEMENTED:
+							//Display info
+						default:
+							//Do default action
+					}
 				}
-			});
-}
-</script>
+			})
+		}
+	);
+	</script>
 
 
-	<div class="page" id="login">
-		<!-- User login form -->
-		<form id="login_form" method="post">
-			<h1>Login</h1>
-			<input type="text" name="login_username" value="" />
-			<input type="password" name="login_password" />
-			<input type="submit" name="Login" />
-		</form>
 
-		<button onclick="setPage('registration')">Register</button>
-	</div>
+	<!--Different displays to be shown upon action-->
+	<div class="display">
 
-	<div class="page" id="registration">
-		<!-- User registration form -->
-		<form id="registration_form" method="post">
-			<h1>Registration</h1>
-			<input type="text" name="email" value="" />
-			<input type="text" name="phone_number" value="" />
-			<input type="password" name="user_password" />
-			<input type="submit" name="Register" />
-		</form>
+		<!-- User login div -->
+		<div class="login_page" id="login">
+			<form id="login_form" method="post">
+				<h1>Login</h1>
+				<fieldset>
 
-	</div>
+					<!--Email-->
+					<label for="login_email" id="login_email_label">Email</label>
+					<input type="text" id="login_email" placeholder="Email" />
+					<label class="error" for="login_email" id="login_email_error">This field is required</label>
 
-	<div class="page" id="main">
+					<!--Password-->
+					<label for="login_password" id="login_password_label">Email</label>
+					<input type="password" id="login_password" placeholder="Password" />
+					<label class="error" for="login_password" id="login_password_error">This field is required</label>
+
+					<!--Login Button-->
+					<input type="submit" id="login_btn" value="Login" />
+
+
+				</fieldset>
+			</form>
+
+			<button onclick="setPage('registration')">Register</button>
+		</div>
+
+
+
+		<!-- User registration div -->
+		<div class="registration_page" id="registration">
+			<form id="registration_form" method="post">
+				<h1>Registration</h1>
+				<fieldset>
+
+					<!--Email-->
+					<label for="email" id="email_label">Email</label>
+					<input type="text" name="email" id="email" placeholder="Email" />
+					<label class="error" for="email" id="email_error">This field is required</label>
+
+					<!--Phone-->
+					<label for="phone" id="phone_label">Phone Number</label>
+					<input type="text" name="phone" id="phone" placeholder="Phone Number" />
+					<label class="error" for="phone" id="phone_error"></label>
+
+					<!--Password-->
+					<label for="password" id="password_label">Password</label>
+					<input type="password" name="password" id="password" placeholder="Password" />
+					<label class="error" for="password" id=password_error">This field is required</label>
+
+					<!--Register Button-->
+					<input type="submit" name="register" class="button" id="register_btn" value="Register Account" />
+
+				</fieldset>
+			</form>
+
+			<button onclick="setPage('login')">Go Back</button>
+		</div>
+
+
+
+		<!-- Main Page div -->
+		<div class="main_page" id="main">
+		</div>
+
+
 	</div>
 
 </body>
