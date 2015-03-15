@@ -129,6 +129,7 @@ function dbGetActiveUserSessionKeys($user_id) {
  * user data from 'appuser' corresponding to the authenticated user, or null
  * on fail.
  */
+// TODO(sdmiths): only return column indexed array from result, not numerical
 function dbAuthenticateUser($email, $password) {
 	$dbconn = dbConnect();
 	$result = null;

@@ -83,6 +83,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 
 
 
+// VERIFIED
 /*
  * Get dump of the current user's information.
  */
@@ -121,6 +122,7 @@ function apiGetUserInfo(&$encoded_request) {
 
 /***** MAIN *****/
 // Check if the connection is HTTPS
+// TODO(sdsmith): Remove all blocking of https verification
 /*if (!$_SERVER['HTTPS']) {
 	die("Connection must be over HTTPS");
 }

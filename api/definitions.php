@@ -39,12 +39,12 @@ function isAuthenticated(&$response=null) {
 	$authed = false;
 
 	// Get user session key
-	if (!getRequesterAPISessionKey($response)) {
+	if (!$session_key = getRequesterAPISessionKey($response)) {
 		return $authed;
 	}
 
 	// Check if active key
-	$authed = dbActiveSessionKey();
+	$authed = dbActiveSessionKey($session_key);
 	
 	if (!$authed && $response) {
 		$response['errors'][] = 'Not authenticated';
