@@ -40,7 +40,7 @@ function isAuthenticated(&$response=null) {
 
 	// Get user session key
 	if (!getRequesterAPISessionKey($response)) {
-		return $false
+		return $false;
 	}
 
 	// Check if active key
@@ -83,7 +83,7 @@ function getRequesterAPISessionKey(&$response=null) {
 		$session_key = $_COOKIE['api_session_key'];
 	} else if ($response) {
 		// Cookie not provided, reporting
-		$response['errors'][] = 'Authentication cookie not provided. Have you logged in?'
+		$response['errors'][] = 'Authentication cookie not provided. Have you logged in?';
 		$response['status'] = STATUS_UNAUTHORIZED;
 	}
 	return $session_key;
