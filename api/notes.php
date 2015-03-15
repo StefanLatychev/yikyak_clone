@@ -84,6 +84,7 @@ function apiGetNotes($encoded_request) {
  * Report note as being inappropriate.
  */
 function apiReport($encoded_request) {
+	
 }
 
 
@@ -93,4 +94,28 @@ function apiReport($encoded_request) {
  */
 function apiVote($encoded_request) {
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ?>

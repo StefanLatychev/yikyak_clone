@@ -16,6 +16,8 @@ require_once("../models/database/authentication.php");
  * Sets an api_session_key cookie on user's system.
  */
 function apiLogin($encoded_request) {
+	echo("apiLogin");
+	var_dump($encoded_request);
 	$response = getAPIResponseTemplate();
 
 	// Decode request
@@ -32,6 +34,10 @@ function apiLogin($encoded_request) {
 	}
 
 	// TODO(sdsmith): whitelist
+
+	var_dump($request);
+	var_dump($request->email);
+	var_dump($request->password);
 
 	// Authenticate user
 	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
@@ -53,6 +59,7 @@ function apiLogin($encoded_request) {
 		$response['status'] = STATUS_OK;
 		
 	} else {
+		echo var_dump($user_info);
 		// Invalid credentials
 		$response['errors'][] = "Invalid credentials";
 		$response['status'] = STATUS_UNAUTHORIZED;
@@ -99,10 +106,10 @@ function apiLogout() {
 
 /***** MAIN *****/
 // Check if the connection is HTTPS
-if (!$_SERVER['HTTPS']) {
+/*if (!$_SERVER['HTTPS']) {
 	die("Connection must be over HTTPS");
 }
-
+*/
 
 // Decode HTTP request type and get request parameters
 $REQUEST_VARS = null;
@@ -110,7 +117,7 @@ $response = null;
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		$REQUEST_VARS = &$_POST;
-		$response = apiLogin(&$REQUEST_VARS['request']);
+		$response = apiLogin($REQUEST_VARS['request']);
 		break;
 
 	case 'DELETE':

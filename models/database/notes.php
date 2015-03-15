@@ -167,6 +167,7 @@ function dbHasVotedOnNote($note_id, $user_id) {
 /*
  * Insert a user's report for the given note.
  */
+// TODO(sdsmith): update the note entry that it has been reported.
 function dbInsertReport($note_id, $reporter_id, $reason) {
 	$dbconn = dbConnect();
 	$success = false;
