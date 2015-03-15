@@ -53,9 +53,15 @@ function apiGetNotes(&$request, &$response) {
 
 	// Check if location present
 	if (!$request->location) {
-		$notes = dbGetWorldwideNotes($max_notes, $timestamp, $get_fwd_in_time);
+		$notes = dbGetWorldwideNotes($max_notes, 
+						$timestamp, 
+						$get_fwd_in_time);
 	} else {
-		$notes = dbGetLocalNotes($max_notes, $request->location->latitude, $request->location->longitude, $timestamp, $get_fwd_in_tim);
+		$notes = dbGetLocalNotes($max_notes, 
+					$request->location->latitude, 
+					$request->location->longitude, 
+					$timestamp, 
+					$get_fwd_in_tim);
 	}
 
 	if ($notes) {
@@ -81,7 +87,8 @@ function apiSubmitNote(&$request, &$response) {
 
 	// TODO(sdsmith): input validation
 	
-	if (dbInsertNote($user_id, $request->latitude, $request->longitude, $request->message)) {
+	if (dbInsertNote($user_id, $request->latitude, 
+			$request->longitude, $request->message)) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
@@ -98,6 +105,16 @@ function apiReportNote(&$request, &$response) {
 	if (!$user_id = isAuthenticated($response)) {
 		return;
 	}
+
+	// TODO(sdsmith): Verifiy input
+
+	// Submit report
+	if (dbInsertReport($request->note_id, $user_id, $request->reason)) {
+		$response['status'] = STATUS_OK;
+	} else {
+		$response['errors'][] = 'Failed to submit report';
+		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
+	}
 }
 
 
@@ -106,7 +123,29 @@ function apiReportNote(&$request, &$response) {
  * Apply vote to a post (either positive or negative).
  */
 function apiVoteNote(&$request, &$response) {
-	// TODO(sdsmith):
+	if (!$user_id = isAuthenticated($response)) {
+		return;
+	}
+
+	// TODO(sdsmith): Verify input
+
+	// Check if user has voted the note previously
+	if (dbHasVotedOnNote($request->note_id, $user_id)) {
+		// Previous vote entry, update it
+		$success = dbUpdateVote($request->note_id, $user_id, $request->upvote);
+	} else {
+		// New vote entry
+		$success = dbInsertVote($request->note_id, $user_id, $request->upvote);
+	}
+
+	// Check vote submit status
+	if ($success) {
+		$response['status'] = STATUS_OK;
+	} else {
+		// Insert/update failed
+		$response['errors'][] = 'Failed to apply vote';
+		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
+	}
 }
 
 

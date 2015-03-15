@@ -6,8 +6,6 @@ require_once("postgres.php");
 define('GEO_LOCAL_RADIUS', 0.01); // ~1.11km latitude and longitude
 
 
-// TODO(sdsmith): DONT SEND BACK USER_ID ON NOTES IN LOCAL AND WORLDWIDE
-
 
 /*
  * Return array of all notes in your the given area, with a maximum array length
@@ -129,6 +127,9 @@ function dbInsertNote($user_id, $latitude, $longitude, $message) {
 /*
  * Insert a user's vote on a particular note into the database.
  */
+// TODO(sdsmith): Update note vote count
+// NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
+// accepted by postgres.
 function dbInsertVote($note_id, $user_id, $isUpvote) {
 	$dbconn = dbConnect();
 	$success = false;
@@ -151,6 +152,18 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 
 	dbClose($dbconn);
 	return $success;
+}
+
+
+
+/*
+ * Updates an existsing vote in the database to the new value.
+ */
+// TODO(sdsmith): Update note vote count
+// NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
+// accepted by postgres.
+function dbUpdateVote($note_id, $user_id, $isUpvote) {
+	// TODO(sdsmith):
 }
 
 
