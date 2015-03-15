@@ -9,6 +9,7 @@ require_once("../models/database/authentication.php");
 
 
 
+// VERIFIED
 /*
  * Return response with session key on successful credential validation 
  * representing the authenticated user.
@@ -16,8 +17,6 @@ require_once("../models/database/authentication.php");
  * Sets an api_session_key cookie on user's system.
  */
 function apiLogin($encoded_request) {
-	echo("apiLogin");
-	var_dump($encoded_request);
 	$response = getAPIResponseTemplate();
 
 	// Decode request
@@ -35,10 +34,6 @@ function apiLogin($encoded_request) {
 
 	// TODO(sdsmith): whitelist
 
-	var_dump($request);
-	var_dump($request->email);
-	var_dump($request->password);
-
 	// Authenticate user
 	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
 		// Generate session key
@@ -52,14 +47,12 @@ function apiLogin($encoded_request) {
 		setcookie('api_session_key', $session_key, $secure=true);
 
 		// Update last login time
-		dbUpdateLastLoginTime($user_info['i']);
+		dbUpdateLastLoginTime($user_info['id']);
 			
-
 		// Completed request
+		$response['api_session_key'] = $session_key;
 		$response['status'] = STATUS_OK;
-		
 	} else {
-		echo var_dump($user_info);
 		// Invalid credentials
 		$response['errors'][] = "Invalid credentials";
 		$response['status'] = STATUS_UNAUTHORIZED;
@@ -70,6 +63,7 @@ function apiLogin($encoded_request) {
 
 
 
+// VERIFIED
 /* 
  * Logs user out of API by invalidating their session key. Return response
  * object.
