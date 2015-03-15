@@ -31,27 +31,28 @@ function getAPIResponseTemplate() {
 
 
 /*
- * Return true if the requesting user is authenticated, false otherwise. If 
- * $response is provided and the user is not authenticated, response status and 
- * error messages will be filled out appropriately.
+ * Return user id of the user if the requesting user is authenticated, null 
+ * otherwise. If $response is provided and the user is not authenticated, 
+ * response status and error messages will be filled out appropriately.
  */
 function isAuthenticated(&$response=null) {
-	$authed = false;
+	$user_id = null;
 
 	// Get user session key
 	if (!$session_key = getRequesterAPISessionKey($response)) {
-		return $authed;
+		return $user_id;
 	}
 
 	// Check if active key
-	$authed = dbActiveSessionKey($session_key);
-	
-	if (!$authed && $response) {
+	$user_id = dbActiveSessionKey($session_key)['user_id'];
+		
+
+	if (!$user_id && $response) {
 		$response['errors'][] = 'Not authenticated';
 		$response['status'] = STATUS_UNAUTHORIZED;
 	}
 
-	return $authed;
+	return $user_id;
 }
 
 
