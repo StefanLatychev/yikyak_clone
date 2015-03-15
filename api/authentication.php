@@ -98,6 +98,7 @@ function apiLogout() {
 
 /***** MAIN *****/
 // Check if the connection is HTTPS
+// TODO(sdsmith): remove the comment block when not testing
 /*if (!$_SERVER['HTTPS']) {
 	die("Connection must be over HTTPS");
 }

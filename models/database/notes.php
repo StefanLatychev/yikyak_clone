@@ -100,14 +100,14 @@ function dbGetWorldwideNotes(	$maxnotes,
 /*
  * Insert given note into the database.
  */
-function dbInsertNote($user_id, $latitude, $longitude, $note) {
+function dbInsertNote($user_id, $latitude, $longitude, $message) {
 	$dbconn = dbConnect();
 	$success = false;
 	$timestamp = date('Y-m-d H:i:s');
 
 	$prepare_ret = pg_prepare($dbconn, 'insert_note', 'INSERT INTO notes (user_id, time, location_latitude, location_longitude, votes, message) VALUES ($1, $2, $3, $4, 0, $5)');
 	if ($prepare_ret) {
-		$resultobj = pg_execute($dbconn, 'insert_note', array($user_id, $timestamp, $latitude, $longitude, $note));
+		$resultobj = pg_execute($dbconn, 'insert_note', array($user_id, $timestamp, $latitude, $longitude, $message));
 		if ($resultobj) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success

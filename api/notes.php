@@ -10,8 +10,7 @@ define('DEFAULT_NUM_NOTES', 10);
 /*
  * Gets notes from the database based on the given request parameters.
  */
-function apiGetNotes($encoded_request) {
-	$response = getAPIResponceTemplate();
+function apiGetNotes(&$request, &$response) {
 	$max_notes = DEFAULT_NUM_NOTES;
 	$get_fwd_in_time = false;		// check for notes before time
 	$timestamp = null;
@@ -19,20 +18,14 @@ function apiGetNotes($encoded_request) {
 
 	// Make sure user is authenticated	
 	if (!isAuthenticated($response)) {
-		return $response;
-	}
-
-	// Decode request
-	// NOTE(sdsmith): makes assumption it's a JSON request
-	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		return $response;
+		return;
 	}
 
 	// Check if time present
 	if ($request->time) {
 		// Convert time to UTC
 		if (!$timestamp = convertUTCTimestamp($request->time->timestamp, $response)) {
-			return $response;
+			return;
 		}
 
 		// Adjust search direction
@@ -49,7 +42,7 @@ function apiGetNotes($encoded_request) {
 				// Bad parameter value
 				$response['errors'][] = 'Invalid time direction value';
 				$response['status'] = STATUS_BAD_REQUEST;
-				return $response;
+				return;
 		}
 	}
 
@@ -59,7 +52,7 @@ function apiGetNotes($encoded_request) {
 	}
 
 	// Check if location present
-	if ($request->location) {
+	if (!$request->location) {
 		$notes = dbGetWorldwideNotes($max_notes, $timestamp, $get_fwd_in_time);
 	} else {
 		$notes = dbGetLocalNotes($max_notes, $request->location->latitude, $request->location->longitude, $timestamp, $get_fwd_in_tim);
@@ -74,17 +67,37 @@ function apiGetNotes($encoded_request) {
 		$response['errors'] = 'Could not retreive notes';
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
-	
-	return $response;
 }
 
+
+/*
+ * Submit a note to the database.
+ */
+function apiSubmitNote(&$request, &$response) {
+	// Make sure user is authenticated	
+	if (!$user_id = isAuthenticated($response)) {
+		return;
+	}
+
+	// TODO(sdsmith): input validation
+	
+	if (dbInsertNote($user_id, $request->latitude, $request->longitude, $request->message)) {
+		$response['status'] = STATUS_OK;
+	} else {
+		// Insert failed
+		$response['errors'][] = 'Failed to submit note';
+		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
+	}
+}
 
 
 /*
  * Report note as being inappropriate.
  */
-function apiReport($encoded_request) {
-	
+function apiReportNote(&$request, &$response) {
+	if (!$user_id = isAuthenticated($response)) {
+		return;
+	}
 }
 
 
@@ -92,13 +105,76 @@ function apiReport($encoded_request) {
 /*
  * Apply vote to a post (either positive or negative).
  */
-function apiVote($encoded_request) {
+function apiVoteNote(&$request, &$response) {
+	// TODO(sdsmith):
 }
 
 
 
 
+/***** MAIN *****/
+// Check if the connection is HTTPS
+// TODO(sdsmith): remove the comment block when not testing
+/*if (!$_SERVER['HTTPS']) {
+	die("Connection must be over HTTPS");
+}
+*/
 
+// Decode HTTP request type and decode request parameters
+$REQUEST_VARS = null;
+$resquest = null;
+$response = getAPIResponseTemplate();
+
+switch($_SERVER['REQUEST_METHOD']) {
+	case 'POST':
+		// Decode request
+		$REQUEST_VARS = &$_POST;
+		if (!$request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+			break;
+		}
+
+		// Determine which API call is being requested
+		if ($request->location && $request->message) {
+			// POST Submit note
+			apiSubmitNote(&$request, &$response);
+			
+		} else if ($request->note_id && $request->reason
+			// POST Report note
+			apiReportNote(&$request, &$response);
+			
+		} else {
+			$response['errors'][] = 'Invalid request parameters';
+			$response['status'] = STATUS_BAD_REQUEST;
+		}
+		break;
+
+	case 'PUT':
+		// Decode request
+		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		if ($request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+			apiVote($request, $response);
+		}
+		break;
+
+	case 'GET':
+		// Decode request
+		$REQUEST_VARS = &$_POST;
+		if ($request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+			apiGetNotes($request, $response);	
+		}
+		break;
+
+	default:
+		// Bad request
+		$response['errors'][] = 'HTTP request type not accepted';
+		$response['status'] = STATUS_BAD_REQUEST;
+		break;
+}
+
+
+// Send response to requester
+// NOTE(sdsmith): assumes the response format is JSON
+print json_encode($response);
 
 
 
