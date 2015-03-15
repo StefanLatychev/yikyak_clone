@@ -10,13 +10,27 @@ function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 	$insert_status = false;
 	$dbconn = dbConnect();
 
-	pg_prepare($dbconn, "insert_user_info", 'INSERT INTO appuser (admin, email, phone_number, join_date, validated, last_login) VALUES ($1, $2, $3, $4, false, $5)');
+	pg_prepare($dbconn, "insert_user_info", 'INSERT INTO appuser (admin, email, phone_number, join_date, validated, last_login) VALUES ($1, $2, $3, $4, false, $4)');
+	//pg_prepare($dbconn, "insert_user_info", 'INSERT INTO appuser (admin, email, phone_number, join_date, validated, last_login) VALUES (false, $1, $2, $3, false, $3)');
 	pg_prepare($dbconn, "insert_user_password", 'INSERT INTO appuser_passwords (user_id, password) VALUES ((SELECT id FROM appuser WHERE email = $1), $2)');
 	
-	// TODO(sdsmith): check validity
+	// TODO(sdsmith): check input validity
+
 	// Registration information is valid
 	$timestamp = date('Y-m-d H:i:s');
-	$result = pg_execute($dbconn, "insert_user_info", array($isAdmin, $email, $phoneNumber));
+
+	// Must convert boolean value to pg acceptable value (due to php qwirk outlined below)
+	// https://bugs.php.net/bug.php?id=44791
+	if ($isAdmin) {
+		$pgconv_isAdmin = 't';
+	} else {
+		$pgconv_isAdmin = 'f';
+	}
+
+	$result = pg_execute($dbconn, "insert_user_info", array($pgconv_isAdmin, $email, $phoneNumber, $timestamp));
+	//$result = pg_execute($dbconn, "insert_user_info", array($email, $phoneNumber, $timestamp));
+	var_dump($result);
+
 	if ($result) {
 		$result = pg_execute($dbconn, "insert_user_password", array($email, $password));
 		if ($result) {
@@ -46,7 +60,7 @@ function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=nu
 	// Check which values to change
 	if ($email) {
 		$num_args += 1;
-		$set_clause .= ""// TODO(sdsmith):
+		$set_clause .= "";// TODO(sdsmith):
 	}
 
 	$dbconn = dbConnect();
