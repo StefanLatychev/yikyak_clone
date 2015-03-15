@@ -83,8 +83,8 @@ function getRequesterAPISessionKey() {
  * @param response		APIResponceTemplate object to be populated on
  *				error if provided.
  */
-function requestDecodeJSON($json_encoded_object, $response=null) {
-	$request = json_decode($encoded_request);
+function requestDecodeJSON($json_encoded_object, &$response=null) {
+	$request = json_decode($json_encoded_object);
 
 	if (!$request && $response) {
 		$response['errors'][] = "Bad JSON format: " . json_last_error();
@@ -101,7 +101,7 @@ function requestDecodeJSON($json_encoded_object, $response=null) {
  * timezone), and null otherwise. If there is an error, $response will be 
  * populated with the appropriate status and error messages if provided.
  */
-function convertUTCTimestamp($timezone_timestamp, $response) {
+function convertUTCTimestamp($timezone_timestamp, &$response) {
 }
 
 

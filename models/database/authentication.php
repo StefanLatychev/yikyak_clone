@@ -11,6 +11,8 @@ function dbInsertSessionKey($session_key, $user_id) {
 	$dbconn = dbConnect();
 	$success = false;
 
+	// TODO(sdsmith): check that user does not have 2 api keys!
+
 	$prepare_ret = pg_prepare($dbconn, 'insert_session_key', 'INSERT INTO active_api_session_keys (session_key, user_id) VALUES ($1, $2)');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_session_key', array($session_key, $user_id));
@@ -44,10 +46,7 @@ function dbRemoveSessionKey($session_key) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'delete_session_key', array($session_key));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
-			if ($result_as_array && $result_as_array[1] >= 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				$success = true;
-			}
+			$success = true;
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
@@ -136,7 +135,7 @@ function dbAuthenticateUser($email, $password) {
 	
 	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT * FROM appuser, appuser_passwords WHERE appuser.email = $1 and appuser_passwords.password = $2');
 	if ($prepare_ret) {
-		$resultobj = pg_execute($dbconn, "credential_check", array($username, $password));
+		$resultobj = pg_execute($dbconn, "credential_check", array($email, $password));
 		if ($resultobj) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array) {

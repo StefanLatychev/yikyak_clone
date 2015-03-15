@@ -9,6 +9,7 @@ require_once("../models/database/authentication.php");
 
 
 
+// VERIFIED
 /*
  * Return response with session key on successful credential validation 
  * representing the authenticated user.
@@ -46,12 +47,11 @@ function apiLogin($encoded_request) {
 		setcookie('api_session_key', $session_key, $secure=true);
 
 		// Update last login time
-		dbUpdateLastLoginTime($user_info['i']);
+		dbUpdateLastLoginTime($user_info['id']);
 			
-
 		// Completed request
+		$response['api_session_key'] = $session_key;
 		$response['status'] = STATUS_OK;
-		
 	} else {
 		// Invalid credentials
 		$response['errors'][] = "Invalid credentials";
@@ -63,6 +63,7 @@ function apiLogin($encoded_request) {
 
 
 
+// VERIFIED
 /* 
  * Logs user out of API by invalidating their session key. Return response
  * object.
@@ -99,10 +100,10 @@ function apiLogout() {
 
 /***** MAIN *****/
 // Check if the connection is HTTPS
-if (!$_SERVER['HTTPS']) {
+/*if (!$_SERVER['HTTPS']) {
 	die("Connection must be over HTTPS");
 }
-
+*/
 
 // Decode HTTP request type and get request parameters
 $REQUEST_VARS = null;
@@ -110,7 +111,7 @@ $response = null;
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		$REQUEST_VARS = &$_POST;
-		$response = apiLogin(&$REQUEST_VARS['request']);
+		$response = apiLogin($REQUEST_VARS['request']);
 		break;
 
 	case 'DELETE':
