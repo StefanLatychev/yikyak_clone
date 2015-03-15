@@ -65,12 +65,4 @@ function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=nu
 	dbClose($dbconn);
 	return $insert_status;
 }
-
-
-/*
- *
- */
-function dbGetUserInfo($user_id) {
-	// TODO(sdsmith):
-}
 ?>

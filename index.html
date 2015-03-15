@@ -7,55 +7,40 @@
 
 <body>
 <script type="text/javascript">
-var STATUS_BAD_REQUEST_CODE = "400";
-var STATUS_SUCCESS_CODE = "200";
-var STATUS_UNAUTHORIZED = "401";
+// HTTP Status codes
+var STATUS_OK = 200");
+var STATUS_BAD_REQUEST = 400;
+var STATUS_UNAUTHORIZED = 401;
+var STATUS_FORBIDDEN = 403;
+var STATUS_REQUEST-URI_TOO_LONG = 414;
+var STATUS_INTERNAL_SERVER_ERROR = 500;
+var STATUS_NOT_IMPLEMENTED = 501;
 
-/*
- * Updates page information with the api responce.
- * @param	api_responce	validated responce from back-end
- */
-function updatePage(api_responce) {
-	// TODO(sdsmith):
-}
 
-/*
- * Constructor for APIRequest object.
- */
-function APIRequest(operation, latitude, longitude) {
-	this.operation = operation;
-	this.latitude = latitude;
-	this.longitude = longitude;
-	this.note = null;
-}
 
 /*
  * Sends AJAX request to back-end and actions appropriately based on responce 
  * status code.
- * @param	api_request	APIRequest object to send
  */
-function sendAPIRequest(api_request) {
-	$.post("api.php",
-		JSON.stringify(request), 
-		function(responce) {
-			// Check responce status code
-			switch(responce.status.split()[0]) {
-				case STATUS_SUCCESS_CODE:
-					// Request success
-					updatePage(responce);
-				case STATUS_UNAUTHORIZED:
-					// User needs to be authenticated
-					// TODO(sdsmith):
-				case STATUS_BAD_REQUEST_CODE:
-					// Bad request
-					// TODO(sdsmith):
-				default:
-					// Unknown status code
-					// TODO(sdsmith):
-			}
-		},
-		"json");
+function sendAPIRequest(	api_request_url, 
+				http_request_method, 
+				encoded_request_payload, 
+				callback_func) {
 
+	var request = $.ajax({
+				url: api_request_url,
+				type: http_request_method,
+				data: {request : encoded_request_payload},
+				success: function(result) {
+					// decode result (it is in json format)
+
+					// perform something
+					// TODO():
+
+					// call my callback					
+					callback_func();	// TODO(): set generic parameters
+				}
+			});
 }
 </script>
 

@@ -6,6 +6,7 @@ require_once("postgres.php");
 define('GEO_LOCAL_RADIUS', 0.01); // ~1.11km latitude and longitude
 
 
+// TODO(sdsmith): DONT SEND BACK USER_ID ON NOTES IN LOCAL AND WORLDWIDE
 
 
 /*
@@ -37,7 +38,7 @@ function dbGetLocalNotes(	$maxnotes,
 	$dbconn = dbConnect();
 	$result = null;
 
-	$prepare_ret = pg_prepare($dbconn, 'get_local_notes', 'SELECT * FROM (SELECT * FROM notes ORDER BY time DESC) WHERE location_latitude BETWEEN $1 - $3 AND $1 + $3 AND location_longitude BETWEEN $2 - $3 AND $2 + $3 AND time' . $comparator . '$4 LIMIT $5');
+	$prepare_ret = pg_prepare($dbconn, 'get_local_notes', 'SELECT * FROM (SELECT id, time, locaion_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) WHERE location_latitude BETWEEN $1 - $3 AND $1 + $3 AND location_longitude BETWEEN $2 - $3 AND $2 + $3 AND time' . $comparator . '$4 LIMIT $5');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'get_local_notes', array($latitude, $longitude, GEO_LOCAL_RADIUS, $timestamp, $maxnotes));
 		if ($resultobj) {
@@ -78,7 +79,7 @@ function dbGetWorldwideNotes(	$maxnotes,
 	$dbconn = dbConnect();
 	$result = null;
 
-	$prepare_ret = pg_prepare($dbconn, 'get_worldwide_notes', 'SELECT * FROM (SELECT * FROM notes ORDER BY time DESC) WHERE time' . $comparator . '$1 LIMIT $2');
+	$prepare_ret = pg_prepare($dbconn, 'get_worldwide_notes', 'SELECT * FROM (SELECT id, time, locaion_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) WHERE time' . $comparator . '$1 LIMIT $2');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'get_worldwide_notes', array($timestamp, $maxnotes));
 		if ($resultobj) {

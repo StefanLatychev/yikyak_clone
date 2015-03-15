@@ -51,7 +51,7 @@ function apiUpdateUserInfo($encoded_request) {
 	}
 
 	// Validate user provided credentials
-	if (!$user_info = dbAuthenticateUser($request->email, $request->password)) {
+	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password)) {
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
@@ -75,13 +75,71 @@ function apiUpdateUserInfo($encoded_request) {
  * Get dump of the current user's information.
  */
 function apiGetUserInfo($encoded_request) {
-	// TODO(sdsmith):
-	
+	$response = getAPIResponseTemplate();
+
+	// Make sure user is authenticated
+	if (!isAuthenticated($response)) {
+		return $response;
+	}
+
+	// Decode request
+	// NOTE(sdsmith): makes assumption it's a json request
+	if (!$request = requestDecodeJSON($encoded_request, $response)) {
+		return $response;
+	}	
+
+	// Validate user provided credentials to get user info
+	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password)) {
+		$response['errors'][] = 'Invalid credentials';
+		$response['status'] = STATUS_UNAUTHORIZED;
+		return $response;
+	}	
+
+	// Set information
+	$response['user_info'] = $user_info;
+	$response['status'] = STATUS_OK;
+
+	return $response;
 }
 
 
 
 
+/***** MAIN *****/
+// Check if the connection is HTTPS
+if (!$_SERVER['HTTPS']) {
+	die("Connection must be over HTTPS");
+}
+
+
+// Decode HTTP request type and get request parameters
+$REQUEST_VARS = null;
+$response = null;
+switch($_SERVER['REQUEST_METHOD']) {
+	case 'POST':
+		$REQUEST_VARS = &$_POST;
+		$response = apiRegisterNewUser(&$REQUEST_VARS['request']);
+		break;
+
+	case 'PUT':
+		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		$response = apiUpdateUserInfo(&$REQUEST_VARS['request']);
+
+	case 'GET':
+		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		$response = apiGetUserInfo(&$REQUEST_VARS['request']);
+		break;
+
+	default:
+		// Bad request
+		$response['errors'][] = 'HTTP request type not accepted';
+		$response['status'] = STATUS_BAD_REQUEST;
+}
+
+
+// Send response to requester
+// NOTE(sdsmith): assumes the response format is JSON
+print json_encode($response);
 
 
 
