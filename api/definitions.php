@@ -40,7 +40,7 @@ function isAuthenticated(&$response=null) {
 
 	// Get user session key
 	if (!getRequesterAPISessionKey($response)) {
-		return $false;
+		return $authed;
 	}
 
 	// Check if active key
