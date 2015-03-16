@@ -63,7 +63,7 @@ function dbGetWorldwideNotes(	$maxnotes,
 	// Set default time stamp to current if not provided
 	if (!$timestamp) {
 		$timestamp = date('Y-m-d H:i:s');
-		$getForwardInTime = true;
+		$getForwardInTime = false;
 	}
 
 	// Determine timestamp comparator
@@ -77,11 +77,12 @@ function dbGetWorldwideNotes(	$maxnotes,
 	$dbconn = dbConnect();
 	$result = null;
 
-	$prepare_ret = pg_prepare($dbconn, 'get_worldwide_notes', 'SELECT * FROM (SELECT id, time, locaion_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) WHERE time' . $comparator . '$1 LIMIT $2');
+	$prepare_ret = pg_prepare($dbconn, 'get_worldwide_notes', 'SELECT * FROM (SELECT id, time, location_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) AS ordered_notes WHERE ordered_notes.time' . $comparator . '$1 LIMIT $2');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'get_worldwide_notes', array($timestamp, $maxnotes));
 		if ($resultobj) {
 			$result = pg_fetch_all($resultobj);
+			var_dump($result);
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
