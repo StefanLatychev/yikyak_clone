@@ -161,7 +161,7 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_vote', array($note_id, $user_id, $isUpvote));
 		if ($resultobj) {			
-			// TODO(sdsmith): update vote count for corresponding note
+			// Update vote count for corresponding note
 			if ($isUpvote == 't') {
 				$vote_delta = 1;
 			} else {
@@ -183,7 +183,7 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 
 
 /*
- * Updates an existsing vote in the database to the new value.
+ * Updates an existing vote in the database to the new value.
  */
 // TODO(sdsmith): Update note vote count
 // NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
