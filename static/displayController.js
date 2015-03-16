@@ -27,20 +27,41 @@ function packageLoginAPIRequest(username, password) {
 
 
 
-/*****************************Logic Functions******************************/
+/************Initialization & Display Change Functions******************/
 
 //Initializes the page to the login screen
 function initialize() {
 	$('body > :not(#login)').hide();
 	$('.error').hide();
-	$('#login').appendTo('body');	
+	$('#login').appendTo('body');
 }
 
 
-//Changes display to specified page
+
+//Google Map Initializer
+function initializeMap() {
+	var mapCanvas = document.getElementById("googleMap");
+	var mapProp = {
+		center:new google.maps.LatLng(51.508742,-0.120850),
+		zoom:5,
+		mapTypeId:google.maps.MapTypeId.ROADMAP
+	};
+	map=new google.maps.Map(mapCanvas, mapProp);
+}
+
+
+
+//Changes display to specified page(reinitialize map if changing to main page)
 function changeDisplay(page_to_display) {
 	$('#'+page_to_display).show();
 	$('body > :not(#'+page_to_display+')').hide();
+	
+	//Reinitialize map when we change to main page, this prevents
+	//the map from displaying incorrectly when we change from and back to it.
+	if(page_to_display === "main") {
+		initializeMap();
+	}
+	
 	$('#'+page_to_display).appendTo('body');
 }
 

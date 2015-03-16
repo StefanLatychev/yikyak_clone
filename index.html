@@ -5,6 +5,7 @@
 	<title>YikYak Clone</title>
 	<script type="text/javascript" src="static/jquery-2.1.3.js"></script>
 	<script type="text/javascript" src="static/displayController.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
 	<script type="text/javascript">
 
 	// HTTP Status codes
@@ -15,7 +16,7 @@
 	var STATUS_REQUEST_URI_TOO_LONG = 414;
 	var STATUS_INTERNAL_SERVER_ERROR = 500;
 	var STATUS_NOT_IMPLEMENTED = 501;
-
+	
 	</script>
 
 </head>
@@ -122,22 +123,45 @@
 			<form id="main_form" method="post">
 				<h1>Main Page Under Construction</h1>
 				<fieldset>
-					<table>			
+					<table>
+						<!--Map-->	
 						<tr>
-							<td>MAP</td>
-						</tr>
-				
-						<tr>
-							<td>CHANNEL</td>
-						</tr>
-				
-						<tr>
-							<td><label id="toolbar">TOOLBAR</label>
-								<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="changeDisplay('login');" />
-								<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('account');" />
-								<!--<input type="button" name="update" class="button" id="update_btn" value="Settings" onclick="Logout();" />-->
+							<td>
+								<label id="map_label">MAP</label>
+								<!--Get rid of style-->
+								<div id="googleMap" style="width:1000px;height:540px;"></div>
 							</td>
 						</tr>
+				
+						<!--Toolbar-->
+						<tr>
+							<td>
+								<label id="toolbar_label">TOOLBAR</label>
+								<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('account');" />
+								<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="changeDisplay('login');" />
+								<!--<input type="button" name="update" class="button" id="update_btn" value="Settings" onclick="updateInfo();" />-->
+							</td>
+						</tr>
+						
+						<!--Channel-->
+						<tr>
+							<td>
+								<label id="channel_label">CHANNEL</label>
+								<div id="timeline">
+								
+								</div>
+							</td>
+						</tr>
+						
+						<!--Message-->
+						<tr>
+							<td>
+								<input type="text" name="message" id="message" placeholder="Message" />
+								<input type="button" name="send" class="button" id="send_btn" value="Send" onclick="sendMessage();" />
+							</td>
+						</tr>
+							
+				
 					</table>
 				</fieldset>
 			</form>
