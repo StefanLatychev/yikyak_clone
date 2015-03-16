@@ -55,30 +55,49 @@ function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 
 
 /*
+ * Return true if given email is in the 
+ */
+function dbExistsEmail($email) {
+}
+
+
+
+/*
+ * Return true if the given phone number exists in the database.
+ */
+function dbExistsPhoneNumber($phoneNumber) {
+}
+
+
+/*
  * TODO(sdsmith):
  */
 function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=null) {
-	$insert_status = false;
-	$num_args = 0;
-	$args = array();
+	$insert_status = true;
+	$dbconn = dbConnect();
 
-	// Check which values to change
-	if ($email) {
-		$num_args += 1;
-		$set_clause .= "";// TODO(sdsmith):
+	// Prepare queries
+	$prep_ret1 = pg_prepare($dbconn, 'update_user_email', 'UPDATE appuser SET email = $1 WHERE id = $2')
+	$prep_ret2 = pg_prepare($dbconn, 'update_user_phone_number', 'UPDATE appuser SET phone_number = $1 WHERE id = $2')
+	$prep_ret3 = pg_prepare($dbconn, 'update_user_password', 'UPDATE appuser_passwords SET password = $1 WHERE user_id = $2')
+
+	// Confirm preperations were successful
+	if (!$prep_ret1 || !$prep_ret2 || !$prep_ret2) {
+		$insert_status = false;
 	}
 
-	$dbconn = dbConnect();
-	pg_prepare($dbconn, "update_user_info", 'UPDATE appuser SET ');
-	
-	// TODO(sdsmith): check validity
-	// Registration information is valid
-	$timestamp = date('Y-m-d H:i:s');
-	$result = pg_execute($dbconn, "update_user_info", array());
-	if ($result) {
-		
-	} else {
-		die("Could not update user information: " . pg_last_error());
+	// Check which values to change
+	if ($email && $insert_status) {
+		$insert_status = pg_execute($dbconn, 'update_user_email', array($email, $user_id));
+	}
+
+	if ($phoneNumber && $insert_status) {
+		$insert_status = pg_execute($dbconn, 'update_user_phone_number', array($phoneNumber, $user_id));
+	}
+
+
+	if ($password && $insert_status) {
+		$insert_status = pg_execute($dbconn, 'update_user_password', array($password, $user_id));
 	}
 
 	dbClose($dbconn);
