@@ -19,6 +19,8 @@ function apiRegisterNewUser(&$encoded_request) {
 	}
 
 	// TODO(sdsmith): input validation
+	//dbExistsEmail
+	//dbExistsPhoneNumber
 
 	// Confirm email/password information matches
 	if (!($request->email1 == $request->email2 && 
@@ -61,6 +63,9 @@ function apiUpdateUserInfo(&$encoded_request) {
 	}
 
 	// TODO(sdsmith): verifiy input
+	//dbExistsEmail
+	//dbExistsPhoneNumber
+
 
 	// Validate user provided credentials
 	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password)) {
@@ -74,7 +79,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
-		$response['errors'][] = 'Could not updated information';
+		$response['errors'][] = 'Could not update information';
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
 
