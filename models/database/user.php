@@ -29,7 +29,6 @@ function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 
 	$result = pg_execute($dbconn, "insert_user_info", array($pgconv_isAdmin, $email, $phoneNumber, $timestamp));
 	//$result = pg_execute($dbconn, "insert_user_info", array($email, $phoneNumber, $timestamp));
-	var_dump($result);
 
 	if ($result) {
 		$result = pg_execute($dbconn, "insert_user_password", array($email, $password));
