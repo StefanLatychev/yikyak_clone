@@ -101,10 +101,11 @@ function getRequesterAPISessionKey(&$response=null) {
  * @param response		APIResponceTemplate object to be populated on
  *				error if provided.
  */
+// TODO(sdsmith): weird issue with apiUpdateUserInfo
 function requestDecodeJSON($json_encoded_object, &$response=null) {
 	$request = json_decode($json_encoded_object);
 
-	if (!$request && $response) {
+	if (json_last_error() != JSON_ERROR_NONE && $response) {
 		$response['errors'][] = "Bad JSON format: " . json_last_error();
 		$response['status'] = STATUS_BAD_REQUEST;
 	}

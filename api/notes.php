@@ -25,6 +25,7 @@ function apiGetNotes(&$request, &$response) {
 
 	// Check if time present
 	if (property_exists($request, 'time')) {
+		$timestamp = $request->time->timestamp;
 
 		// Adjust search direction
 		switch ($request->time->direction) {
@@ -195,7 +196,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
 		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiVote($request, $response);
-		}
+		} 
 		break;
 
 	case 'GET':
