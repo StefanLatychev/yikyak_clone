@@ -3,15 +3,8 @@
 
 <head>
 	<title>YikYak Clone</title>
-</head>
-
-<body>
-
-	<!-- jQuery include -->
-	<script language="javascript" src="static/jquery-2.1.3.js"></script>
-	<script language="javascript" src="static/displayContoller.js"></script>
-	
-
+	<script type="text/javascript" src="static/jquery-2.1.3.js"></script>
+	<script type="text/javascript" src="static/displayController.js"></script>
 	<script type="text/javascript">
 
 	// HTTP Status codes
@@ -19,85 +12,50 @@
 	var STATUS_BAD_REQUEST = 400;
 	var STATUS_UNAUTHORIZED = 401;
 	var STATUS_FORBIDDEN = 403;
-	var STATUS_REQUEST-URI_TOO_LONG = 414;
+	var STATUS_REQUEST_URI_TOO_LONG = 414;
 	var STATUS_INTERNAL_SERVER_ERROR = 500;
 	var STATUS_NOT_IMPLEMENTED = 501;
 
-	$("display").hide();
-	$("login").show();
-
-	/*
-	 * Sends AJAX request to back-end and actions appropriately based on responce 
-	 * status code.
-	 */
-	function sendAPIRequest(
-		api_request_url, 
-		http_request_method, 
-		encoded_request_payload, 
-		callback_func) {
-
-			var request = $.ajax({
-				url: api_request_url,
-				type: http_request_method,
-				data: {request : encoded_request_payload},
-				success: function(result) {
-					// decode result (it is in json format)
-
-					result_object = JSON.parse(result);
-					switch(result_object.status.split[0]){
-						case STATUS_OK:
-							//Callback function goes here
-							callback_func();
-						case STATUS_BAD_REQUEST:
-							//Display info
-						case STATUS_UNAUTHORIZED:
-							//Display info
-						case STATUS_FORBIDDEN:
-							//Display info
-						case STATUS_REQUEST-URI_TOO_LONG:
-							//Display info
-						case STATUS_INTERNAL_SERVER_ERROR:
-							//Display info
-						case STATUS_NOT_IMPLEMENTED:
-							//Display info
-						default:
-							//Do default action
-					}
-				}
-			});
-		}
-	);
 	</script>
 
+</head>
 
-
+<body>
+	
 	<!--Different displays to be shown upon action-->
-	<div class="display">
+	<div class="display" id="display">
 
 		<!-- User login div -->
 		<div class="login_page" id="login">
 			<form id="login_form" method="post">
 				<h1>Login</h1>
 				<fieldset>
+					<table>
+						<tr>
+							<!--Email-->
+							<td><label for="login_email" id="login_email_label">Email</label></td>
+							<td><input type="text" id="login_email" placeholder="Email" /></td>
+							<td><label class="error" for="login_email" id="login_email_error">Please enter your email</label></td>
+						</tr>
 
-					<!--Email-->
-					<label for="login_email" id="login_email_label">Email</label>
-					<input type="text" id="login_email" placeholder="Email" />
-					<label class="error" for="login_email" id="login_email_error">This field is required</label>
+						<tr>
+							<!--Password-->
+							<td><label for="login_password" id="login_password_label">Password</label></td>
+							<td><input type="password" id="login_password" placeholder="Password" /></td>
+							<td><label class="error" for="login_password" id="login_password_error">Please enter your password</label></td>
+						</tr>
 
-					<!--Password-->
-					<label for="login_password" id="login_password_label">Password</label>
-					<input type="password" id="login_password" placeholder="Password" />
-					<label class="error" for="login_password" id="login_password_error">This field is required</label>
+					</table>
 
 					<!--Login Button-->
-					<input type="submit" name="login" class="button" id="login_btn" value="Login" />
+					<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
 
+					<!--Registration Button-->
+					<input type="button" name="register" class="button" id="register_btn" value="Register" onclick="changeDisplay('registration');" />
 
 				</fieldset>
 			</form>
 
-			<button onclick="setPage('registration')">Register</button>
 		</div>
 
 
@@ -107,44 +65,69 @@
 			<form id="registration_form" method="post">
 				<h1>Registration</h1>
 				<fieldset>
+					<table>
+						<tr>
+							<!--Email-->
+							<td><label for="email1" id="email1_label">Email</label></td>
+							<td><input type="text" name="email1" id="email1" placeholder="Email" /></td>
+							<td><label class="error" for="email1" id="email1_error">This field is required</label></td>
+						</tr>
 
-					<!--Email-->
-					<label for="email" id="email_label">Email</label>
-					<input type="text" name="email" id="email" placeholder="Email" />
-					<label class="error" for="email" id="email_error">This field is required</label>
+						<tr>
+							<!--Email Confirmation-->
+							<td><label for="email2" id="email2_label">Confirm Email</label></td>
+							<td><input type="text" name="email2" id="email2" placeholder="Email" /></td>
+							<td><label class="error" for="email2" id="email2_error">This field is required</label>
+								<label class="error" for="email2" id="email2_error2">Emails do not match</label></td>
+						</tr>
 
-					<!--Phone-->
-					<label for="phone" id="phone_label">Phone Number</label>
-					<input type="text" name="phone" id="phone" placeholder="Phone Number" />
-					<label class="error" for="phone" id="phone_error">Invalid characters</label>
+						<tr>
+							<!--Phone-->
+							<td><label for="phone" id="phone_label">Phone Number</label></td>
+							<td><input type="text" name="phone" id="phone" placeholder="Phone Number" /></td>
+							<td><label class="error" for="phone" id="phone_error">Invalid characters</label></td>
+						</tr>
 
-					<!--Password-->
-					<label for="password" id="password_label">Password</label>
-					<input type="password" name="password" id="password" placeholder="Password" />
-					<label class="error" for="password" id=password_error">This field is required</label>
+						<tr>
+							<!--Password-->
+							<td><label for="password" id="password_label">Password</label></td>
+							<td><input type="password" name="password" id="password" placeholder="Password" /></td>
+							<td><label class="error" for="password" id="password_error">This field is required</label></td>
+						</tr>
 
-					<!--Password Confirmation-->
-					<label for="confirm" id="confirm_label">Password</label>
-					<input type="password" name="confirm" id="confirm" placeholder="Confirm Password" />
-					<label class="error" for="confirm" id=confirm_error">This field is required or does not match password given</label>
+						<tr>
+							<!--Password Confirmation-->
+							<td><label for="confirm" id="confirm_label">Password</label></td>
+							<td><input type="password" name="confirm" id="confirm" placeholder="Confirm Password" /></td>
+							<td><label class="error" for="confirm" id="confirm_error">This field is required</label>
+								<label class="error" for="confirm" id="confirm_error2">Passwords do not match</label></td>
+						</tr>
+
+					</table>
 
 					<!--Register Button-->
-					<input type="submit" name="register" class="button" id="register_btn" value="Register Account" />
+					<input type="button" name="register" class="button" id="register_btn" value="Register Account" onclick="registerValidation();" />
+					<!--Go Back Button-->
+					<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('login');" />
 
 				</fieldset>
 			</form>
 
-			<button onclick="setPage('login')">Go Back</button>
 		</div>
 
 
 
 		<!-- Main Page div -->
 		<div class="main_page" id="main">
+			Hello World!
 		</div>
 
-
 	</div>
+	
+	<!-- Initialization -->
+	<script>
+		initialize();
+	</script>
 
 </body>
 </html>
