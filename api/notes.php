@@ -133,7 +133,7 @@ function apiVoteNote(&$request, &$response) {
 	// TODO(sdsmith): Verify input
 
 	// Check if user has voted the note previously
-	if (dbHasVotedOnNote($request->note_id, $user_id)) {
+	if (dbGetVoteOnNote($request->note_id, $user_id)) {
 		// Previous vote entry, update it
 		$success = dbUpdateVote($request->note_id, $user_id, $request->upvote);
 	} else {

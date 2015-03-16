@@ -122,7 +122,33 @@ function dbInsertNote($user_id, $latitude, $longitude, $message) {
 
 
 /*
+ * Modifies the vote count of the given note by the given vote delta. Return
+ * true on success, false on failure.
+ */
+function dbUpdateNoteVoteCount($note_id, $vote_delta) {
+	$dbconn = dbConnect();
+	$success = false;
+
+	$prepare_ret = pg_prepare($dbconn, 'update_note_vote_count', 'UPDATE notes SET votes = votes + $1 WHERE id = $2');
+	if ($prepare_ret) {
+		$resultobj = pg_execute($dbconn, 'update_note_vote_count', array($vote_delta, $note_id));
+		if ($resultobj) {
+			$success = true;
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+	return $success;
+}
+
+
+/*
  * Insert a user's vote on a particular note into the database.
+ * @param isUpvote	't' if the vote is an upvote, 'f' otherwise
  */
 // TODO(sdsmith): Update note vote count
 // NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
@@ -134,9 +160,15 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 	$prepare_ret = pg_prepare($dbconn, 'insert_vote', 'INSERT INTO notes_votes (note_id, user_id, upvote) VALUES ($1, $2, $3)');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_vote', array($note_id, $user_id, $isUpvote));
-		if ($resultobj) {
-			$success = true;
+		if ($resultobj) {			
 			// TODO(sdsmith): update vote count for corresponding note
+			if ($isUpvote == 't') {
+				$vote_delta = 1;
+			} else {
+				$vote_delta = -1;
+			}
+
+			$success = dbUpdateNoteVoteCount($note_id, $vote_delta);
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
@@ -165,18 +197,18 @@ function dbUpdateVote($note_id, $user_id, $isUpvote) {
 /*
  * Return true if the given user has voted on the given note, false otherwise.
  */
-function dbHasVotedOnNote($note_id, $user_id) {
+function dbGetVoteOnNote($note_id, $user_id) {
 	// TODO(sdsmith):
 	$dbconn = dbConnect();
-	$existing_vote = false;
+	$result = null;
 
-	$prepare_ret = pg_prepare($dbconn, 'check_vote_existance', 'SELECT COUNT(*) AS occurences FROM notes_votes WHERE note_id = $1 AND user_id = $2');
+	$prepare_ret = pg_prepare($dbconn, 'check_vote_existance', 'SELECT * FROM notes_votes WHERE note_id = $1 AND user_id = $2');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'check_vote_existance', array($note_id, $user_id));
 		if ($resultobj) {
 			$result_as_array = pg_fetch_array($resultobj);
 			if ($result_as_array) {
-				$existing_vote = 0 != $result_as_array['occurences'];
+				$result = $result_as_array;
 			}
 		} else {
 			die("Query failed: " . pg_last_error());
@@ -185,7 +217,7 @@ function dbHasVotedOnNote($note_id, $user_id) {
 		die("Prepared statement failed: " . pg_last_error());
 	}
 
-	return $existing_vote;
+	return $result;
 }
 
 
