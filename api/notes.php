@@ -8,6 +8,7 @@ define('DEFAULT_NUM_NOTES', 10);
 
 
 
+// VERIFIED
 /*
  * Gets notes from the database based on the given request parameters.
  */
@@ -98,6 +99,7 @@ function apiSubmitNote(&$request, &$response) {
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
 }
+
 
 
 /*

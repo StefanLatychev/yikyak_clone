@@ -17,6 +17,8 @@ function apiRegisterNewUser(&$encoded_request) {
 	if (!$request = requestDecodeJSON($encoded_request, $response)) {
 		return $response;
 	}
+	
+	var_dump($encoded_request);
 
 	// TODO(sdsmith): input validation
 	//dbExistsEmail
@@ -49,6 +51,7 @@ function apiRegisterNewUser(&$encoded_request) {
  * Update the current user's information.
  */
 function apiUpdateUserInfo(&$encoded_request) {
+	var_dump($encoded_request);
 	$response = getAPIResponseTemplate();
 	
 	// Make sure user is authenticated
@@ -56,11 +59,16 @@ function apiUpdateUserInfo(&$encoded_request) {
 		return $response;
 	}
 
+	var_dump($encoded_request);
+
 	// Decode request
 	// NOTE(sdsmith): makes assumption it's a json request
 	if (!$request = requestDecodeJSON($encoded_request, $response)) {
+		echo("decode failed");
 		return $response;
 	}
+	var_dump($encoded_request);
+	var_dump($request);
 
 	// TODO(sdsmith): verifiy input
 	//dbExistsEmail
@@ -75,7 +83,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	}
 
 	// Update user information
-	if (dbUpdateUserInfo($user_info['id'], $request->new_email, $request->new_password)) {
+	if (dbUpdateUserInfo($user_info['id'], $request->new_email1, $request->new_password1)) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
