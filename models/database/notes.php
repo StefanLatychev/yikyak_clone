@@ -22,7 +22,7 @@ function dbGetLocalNotes(	$maxnotes,
 	// Set default time stamp to current if not provided
 	if (!$timestamp) {
 		$timestamp = date('Y-m-d H:i:s');
-		$getForwardInTime = true;
+		$getForwardInTime = false;
 	}
 
 	// Determine timestamp comparator
@@ -36,7 +36,9 @@ function dbGetLocalNotes(	$maxnotes,
 	$dbconn = dbConnect();
 	$result = null;
 
-	$prepare_ret = pg_prepare($dbconn, 'get_local_notes', 'SELECT * FROM (SELECT id, time, locaion_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) WHERE location_latitude BETWEEN $1 - $3 AND $1 + $3 AND location_longitude BETWEEN $2 - $3 AND $2 + $3 AND time' . $comparator . '$4 LIMIT $5');
+	$sql_query = 'SELECT * FROM (SELECT id, time, location_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) AS ordered_notes WHERE (ordered_notes.location_latitude BETWEEN $1::real - $3::real AND $1::real + $3::real) AND (ordered_notes.location_longitude BETWEEN $2::real - $3::real AND $2::real + $3::real) AND ordered_notes.time ' . $comparator . ' $4 LIMIT $5';
+
+	$prepare_ret = pg_prepare($dbconn, 'get_local_notes', $sql_query);
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'get_local_notes', array($latitude, $longitude, GEO_LOCAL_RADIUS, $timestamp, $maxnotes));
 		if ($resultobj) {

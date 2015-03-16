@@ -22,12 +22,10 @@ function apiGetNotes(&$request, &$response) {
 		return;
 	}
 
+	// TODO(validation):
+
 	// Check if time present
-	if ($request->time) {
-		// Convert time to UTC
-		if (!$timestamp = convertUTCTimestamp($request->time->timestamp, $response)) {
-			return;
-		}
+	if (property_exists($request, 'time')) {
 
 		// Adjust search direction
 		switch ($request->time->direction) {
@@ -48,12 +46,12 @@ function apiGetNotes(&$request, &$response) {
 	}
 
 	// Check if max_notes present
-	if ($request->max_notes) {
+	if (property_exists($request, 'max_notes')) {
 		$max_notes = $request->max_notes;
 	}
 
 	// Check if location present
-	if (!$request->location) {
+	if (!property_exists($request, 'location')) {
 		$notes = dbGetWorldwideNotes($max_notes, 
 						$timestamp, 
 						$get_fwd_in_time);
@@ -62,7 +60,7 @@ function apiGetNotes(&$request, &$response) {
 					$request->location->latitude, 
 					$request->location->longitude, 
 					$timestamp, 
-					$get_fwd_in_tim);
+					$get_fwd_in_time);
 	}
 
 	if ($notes) {
@@ -71,8 +69,9 @@ function apiGetNotes(&$request, &$response) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Query failed
-		$response['errors'] = 'Could not retreive notes';
-		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
+		$response['errors'][] = 'No notes meeting criteria';
+		$response['status'] = STATUS_OK;
+		$response['notes'] = array();
 	}
 }
 
@@ -110,6 +109,7 @@ function apiReportNote(&$request, &$response) {
 	}
 
 	// TODO(sdsmith): Verifiy input
+	// Confirm note exists.
 
 	// Submit report
 	if (dbInsertReport($request->note_id, $user_id, $request->reason)) {
@@ -131,6 +131,7 @@ function apiVoteNote(&$request, &$response) {
 	}
 
 	// TODO(sdsmith): Verify input
+	// Confirm note exists.
 
 	// Check if user has voted the note previously
 	if (dbGetVoteOnNote($request->note_id, $user_id)) {
@@ -200,7 +201,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 
 	case 'GET':
 		// Decode request
-		$REQUEST_VARS = &$_POST;
+		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
 		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiGetNotes($request, $response);	
 		}
