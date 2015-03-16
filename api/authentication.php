@@ -1,5 +1,6 @@
 <?php
 require_once("definitions.php");
+require_once("verification.php");
 require_once("../models/database/authentication.php");
 
 // TODO(sdsmith): Set active session key expire time so that it can be removed 
@@ -18,6 +19,7 @@ require_once("../models/database/authentication.php");
  */
 function apiLogin($encoded_request) {
 	$response = getAPIResponseTemplate();
+	$valid_input = true;
 
 	// Decode request
 	// NOTE(sdsmith): makes the assumption it's a json request
@@ -32,7 +34,28 @@ function apiLogin($encoded_request) {
 		return $response;
 	}
 
-	// TODO(sdsmith): whitelist
+	// Verify input
+	// email
+	if (!property_exists($request, "email") 
+		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL) {
+		
+		$valid_input = false;
+		$response['errors'][] = 'Parameter email is invalid';
+	}
+	// password
+	if (!property_exists($request, "password")
+		|| !whitelistString($request->password, 
+					WHITELIST_REGEX_PASSWORD) {
+		
+		$valid_input = false;
+		$response['errors'][] = 'Parameter password is invalid';
+	}
+
+	// Stop processing request if there exists invalid input
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
 
 	// Authenticate user
 	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
@@ -44,7 +67,9 @@ function apiLogin($encoded_request) {
 		
 		// Set the API key as a cookie on the user's machine
 		// @param secure	indicates only send cookie over https
-		setcookie('api_session_key', $session_key, $secure=true);
+		// TODO(sdsmith): make https only when in production
+		// TODO(sdsmith): When database gets session key timeout active, need to set same timeout on the cookies.
+		setcookie('api_session_key', $session_key)/*, $secure=true);*/;
 
 		// Update last login time
 		dbUpdateLastLoginTime($user_info['id']);
