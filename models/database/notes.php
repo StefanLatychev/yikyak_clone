@@ -163,7 +163,7 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 // NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
 // accepted by postgres.
 function dbUpdateVote($note_id, $user_id, $isUpvote) {
-	// TODO(sdsmith):
+	
 }
 
 
@@ -173,6 +173,25 @@ function dbUpdateVote($note_id, $user_id, $isUpvote) {
  */
 function dbHasVotedOnNote($note_id, $user_id) {
 	// TODO(sdsmith):
+	$dbconn = dbConnect();
+	$existing_vote = false;
+
+	$prepare_ret = pg_prepare($dbconn, 'check_vote_existance', 'SELECT COUNT(*) AS occurences FROM notes_votes WHERE note_id = $1 AND user_id = $2');
+	if ($prepare_ret) {
+		$resultobj = pg_execute($dbconn, 'check_vote_existance', array($note_id, $user_id));
+		if ($resultobj) {
+			$result_as_array = pg_fetch_array($resultobj);
+			if ($result_as_array) {
+				$existing_vote = 0 != $result_as_array['occurences'];
+			}
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	return $existing_vote;
 }
 
 
