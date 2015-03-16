@@ -49,7 +49,7 @@ function whitelistString($string, $whitelist_regex) {
 	$valid = false;
 
 	// Check string content
-	if (preg_match($whitelist_regex, $input, $matched) !== false) {
+	if (preg_match($whitelist_regex, $string, $matched) !== false) {
 		$valid = $input === $matched[0];
 	}
 
