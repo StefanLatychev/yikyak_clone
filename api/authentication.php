@@ -33,7 +33,7 @@ function apiLogin($encoded_request) {
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
 	}
-
+/*
 	// Verify input
 	// email
 	if (!property_exists($request, "email") 
@@ -56,7 +56,7 @@ function apiLogin($encoded_request) {
 		$response['status'] = STATUS_BAD_REQUEST;
 		return $response;
 	}
-
+*/
 	// Authenticate user
 	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
 		// Generate session key
