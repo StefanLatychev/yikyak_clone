@@ -55,9 +55,20 @@ function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 
 
 /*
- * Return true if given email is in the 
+ * Return true if given email is in the database.
  */
 function dbExistsEmail($email) {
+	$exists = false;
+	$dbconn = dbConnect();
+
+	if (pg_prepare($dbconn, 'exists_email', 'SELECT * FROM appuser WHERE email = $1')) {
+		if ($resultobj = pg_execute($dbconn, 'exists_email', array($email))) {
+			$exists = pg_fetch_array($resultobj);
+		}
+	} 
+
+	dbClose($dbconn);
+	return $exists;
 }
 
 
@@ -66,11 +77,23 @@ function dbExistsEmail($email) {
  * Return true if the given phone number exists in the database.
  */
 function dbExistsPhoneNumber($phoneNumber) {
+	$exists = false;
+	$dbconn = dbConnect();
+
+	if (pg_prepare($dbconn, 'exists_phone_number', 'SELECT * FROM appuser WHERE phone_number = $1')) {
+		if ($resultobj = pg_execute($dbconn, 'exists_phone_number', array($phoneNumber))) {
+			$exists = pg_fetch_array($resultobj);
+		}
+	} 
+
+	dbClose($dbconn);
+	return $exists;
 }
 
 
+
 /*
- * TODO(sdsmith):
+ * Updates given user id's information to the given values (if given).
  */
 function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=null) {
 	$insert_status = true;
