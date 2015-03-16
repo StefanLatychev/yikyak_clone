@@ -121,7 +121,7 @@ function apiGetUserInfo(&$encoded_request) {
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
-	}	
+	}
 
 	// Set information
 	$response['user_info'] = $user_info;
@@ -155,7 +155,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 		$response = apiUpdateUserInfo($REQUEST_VARS['request']);
 
 	case 'GET':
-		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		$REQUEST_VARS = &$_GET;
 		$response = apiGetUserInfo($REQUEST_VARS['request']);
 		break;
 
