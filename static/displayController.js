@@ -38,10 +38,10 @@ function initialize() {
 
 
 //Changes display to specified page
-function changeDisplay(page_to_be_displayed) {
-	$('#'+page_to_be_displayed).show();
-	$('body > :not(#'+page_to_be_displayed+')').hide();
-	$('#'+page_to_be_displayed).appendTo('body');
+function changeDisplay(page_to_display) {
+	$('#'+page_to_display).show();
+	$('body > :not(#'+page_to_display+')').hide();
+	$('#'+page_to_display).appendTo('body');
 }
 
 
@@ -184,19 +184,18 @@ function sendAPIRequest(
 				// decode result (it is in json format)
 				result_object = JSON.parse(result);
 				
-					
+				/*
 				alert("Parsed JSON object");
 				alert(result_object.status);
 				alert(STATUS_OK);
 				alert(Number(result_object.status) === STATUS_OK);
-				
+				*/
 				
 				switch(Number(result_object.status)){
 					case STATUS_OK:
 						//Callback function goes here
 						callback_func(result_object);
 						//alert("Good Request");
-						//return result_object;
 						break;
 					case STATUS_BAD_REQUEST:
 						//alert("Bad Request");
