@@ -50,7 +50,7 @@ function whitelistString($string, $whitelist_regex) {
 
 	// Check string content
 	if (preg_match($whitelist_regex, $string, $matched) !== false) {
-		$valid = $input === $matched[0];
+		$valid = $string === $matched[0];
 	}
 
 	return $valid;
