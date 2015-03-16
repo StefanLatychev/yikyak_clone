@@ -8,6 +8,12 @@
  */
 function dbRegisterNewUser($isAdmin, $email, $phoneNumber, $password) {
 	$insert_status = false;
+
+	// Make sure the empty string is not passed to the database.
+	if ($phoneNumber == '') {
+		$phoneNumber = null;
+	}
+
 	$dbconn = dbConnect();
 
 	pg_prepare($dbconn, "insert_user_info", 'INSERT INTO appuser (admin, email, phone_number, join_date, validated, last_login) VALUES ($1, $2, $3, $4, false, $4)');
