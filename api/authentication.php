@@ -34,6 +34,7 @@ function apiLogin($encoded_request) {
 		return $response;
 	}
 /*
+	// TODO(sdsmith): make sure that the user does not already have an active session key
 	// Verify input
 	// email
 	if (!property_exists($request, "email") 
@@ -99,7 +100,7 @@ function apiLogout() {
 	$session_key = getRequesterAPISessionKey($response);
 
 	// Confirm session key is provided
-	if ($session_key) {
+	if (!$session_key) {
 		return $response;
 	}
 
