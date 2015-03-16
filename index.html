@@ -119,7 +119,49 @@
 
 		<!-- Main Page div -->
 		<div class="main_page" id="main">
-			Hello World!
+			<form id="main_form" method="post">
+				<h1>Main Page Under Construction</h1>
+				<fieldset>
+					<table>			
+						<tr>
+							<td>MAP</td>
+						</tr>
+				
+						<tr>
+							<td>CHANNEL</td>
+						</tr>
+				
+						<tr>
+							<td><label id="toolbar">TOOLBAR</label>
+								<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="changeDisplay('login');" />
+								<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('account');" />
+								<!--<input type="button" name="update" class="button" id="update_btn" value="Settings" onclick="Logout();" />-->
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+			</form>
+		</div>
+		
+		<!-- Account Info div -->
+		<div class="account_page" id="account">
+			<form id="account_form" method="post">
+				<h1>Account Page Under Construction</h1>
+				<fieldset>
+					<table>			
+						<tr>
+							<td>
+								<input type="button" name="update" class="button" id="update_btn" value="Update Account Info" onclick="updateAccountInfo();" />
+								<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('main');" />
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+			</form>
+		</div>
+		
+		<!-- Error Page div -->
+		<div class="error_page" id="error_page">
 		</div>
 
 	</div>
