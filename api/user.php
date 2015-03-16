@@ -18,8 +18,6 @@ function apiRegisterNewUser(&$encoded_request) {
 		return $response;
 	}
 	
-	var_dump($encoded_request);
-
 	// TODO(sdsmith): input validation
 	//dbExistsEmail
 	//dbExistsPhoneNumber
