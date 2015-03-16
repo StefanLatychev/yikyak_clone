@@ -22,7 +22,7 @@ define("WHITELIST_REGEX_UTC_TIMESTAMP", "/\d\d-\d\d-\d\d \d\d:\d\d:\d\d/");
  * Return true if given string is abides by the given max and min length values 
  * (inclusive). Will only check supplied length requirement(s).
  */
-function isValidLength($string, $max_len=null, $min_len=null,) {
+function isValidLength($string, $max_len=null, $min_len=null) {
 	$valid = true;
 	$str_len = strlen($string);
 
