@@ -37,7 +37,7 @@ function apiLogin($encoded_request) {
 	// Verify input
 	// email
 	if (!property_exists($request, "email") 
-		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL) {
+		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL)) {
 		
 		$valid_input = false;
 		$response['errors'][] = 'Parameter email is invalid';
@@ -45,7 +45,7 @@ function apiLogin($encoded_request) {
 	// password
 	if (!property_exists($request, "password")
 		|| !whitelistString($request->password, 
-					WHITELIST_REGEX_PASSWORD) {
+					WHITELIST_REGEX_PASSWORD)) {
 		
 		$valid_input = false;
 		$response['errors'][] = 'Parameter password is invalid';
