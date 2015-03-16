@@ -117,7 +117,7 @@ function apiGetUserInfo(&$encoded_request) {
 	// TODO(sdsmith): verify input
 
 	// Validate user provided credentials to get user info
-	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password)) {
+	if (!$user_info = dbAuthenticateUser($request->email, $request->password)) {
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
