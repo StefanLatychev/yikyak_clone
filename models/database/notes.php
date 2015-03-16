@@ -107,10 +107,7 @@ function dbInsertNote($user_id, $latitude, $longitude, $message) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_note', array($user_id, $timestamp, $latitude, $longitude, $message));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
-			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				$success = true;
-			}
+			$success = true;
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
@@ -138,11 +135,8 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_vote', array($note_id, $user_id, $isUpvote));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
-			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				$success = true;
-				// TODO(sdsmith): update vote count for corresponding note
-			}
+			$success = true;
+			// TODO(sdsmith): update vote count for corresponding note
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
@@ -209,10 +203,7 @@ function dbInsertReport($note_id, $reporter_id, $reason) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_report', array($note_id, $reporter_id, $timestamp, $reason));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
-			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
-				$success = true;
-			}
+			$success = true;
 		} else {
 			die("Query failed: " . pg_last_error());
 		}

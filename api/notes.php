@@ -3,6 +3,7 @@
  * Notes API.
  */
 require_once('definitions.php');
+require_once('../models/database/notes.php');
 define('DEFAULT_NUM_NOTES', 10);
 
 
@@ -76,6 +77,8 @@ function apiGetNotes(&$request, &$response) {
 }
 
 
+
+// VERIFIED
 /*
  * Submit a note to the database.
  */
@@ -87,8 +90,8 @@ function apiSubmitNote(&$request, &$response) {
 
 	// TODO(sdsmith): input validation
 	
-	if (dbInsertNote($user_id, $request->latitude, 
-			$request->longitude, $request->message)) {
+	if (dbInsertNote($user_id, $request->location->latitude, 
+			$request->location->longitude, $request->message)) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
@@ -168,18 +171,18 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		// Decode request
 		$REQUEST_VARS = &$_POST;
-		if (!$request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+		if (!$request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			break;
 		}
 
 		// Determine which API call is being requested
 		if ($request->location && $request->message) {
 			// POST Submit note
-			apiSubmitNote(&$request, &$response);
+			apiSubmitNote($request, $response);
 			
-		} else if ($request->note_id && $request->reason
+		} elseif ($request->note_id && $request->reason) {
 			// POST Report note
-			apiReportNote(&$request, &$response);
+			apiReportNote($request, $response);
 			
 		} else {
 			$response['errors'][] = 'Invalid request parameters';
@@ -190,7 +193,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'PUT':
 		// Decode request
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
-		if ($request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiVote($request, $response);
 		}
 		break;
@@ -198,7 +201,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		// Decode request
 		$REQUEST_VARS = &$_POST;
-		if ($request = requestDecodeJSON($RESQUEST_VARS['request'], $response)) {
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiGetNotes($request, $response);	
 		}
 		break;
