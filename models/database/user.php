@@ -100,9 +100,9 @@ function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=nu
 	$dbconn = dbConnect();
 
 	// Prepare queries
-	$prep_ret1 = pg_prepare($dbconn, 'update_user_email', 'UPDATE appuser SET email = $1 WHERE id = $2')
-	$prep_ret2 = pg_prepare($dbconn, 'update_user_phone_number', 'UPDATE appuser SET phone_number = $1 WHERE id = $2')
-	$prep_ret3 = pg_prepare($dbconn, 'update_user_password', 'UPDATE appuser_passwords SET password = $1 WHERE user_id = $2')
+	$prep_ret1 = pg_prepare($dbconn, 'update_user_email', 'UPDATE appuser SET email = $1 WHERE id = $2');
+	$prep_ret2 = pg_prepare($dbconn, 'update_user_phone_number', 'UPDATE appuser SET phone_number = $1 WHERE id = $2');
+	$prep_ret3 = pg_prepare($dbconn, 'update_user_password', 'UPDATE appuser_passwords SET password = $1 WHERE user_id = $2');
 
 	// Confirm preperations were successful
 	if (!$prep_ret1 || !$prep_ret2 || !$prep_ret2) {
