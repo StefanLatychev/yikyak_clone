@@ -13,7 +13,6 @@ define('DEFAULT_NUM_NOTES', 10);
  */
 function apiGetNotes(&$request, &$response) {
 	$max_notes = DEFAULT_NUM_NOTES;
-	$get_fwd_in_time = false;		// check for notes before time
 	$timestamp = null;
 	$notes = null;
 

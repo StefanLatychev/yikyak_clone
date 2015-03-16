@@ -28,15 +28,17 @@ function dbGetLocalNotes(	$maxnotes,
 	// Determine timestamp comparator
 	if ($getForwardInTime) {
 		$comparator = ">=";
+		$sort_direction = "ASC";
 	} else {
 		$comparator = "<=";
+		$sort_direction = "DESC";
 	}
 
 	// Perform query
 	$dbconn = dbConnect();
 	$result = null;
 
-	$sql_query = 'SELECT * FROM (SELECT id, time, location_latitude, location_longitude, votes, message FROM notes ORDER BY time DESC) AS ordered_notes WHERE (ordered_notes.location_latitude BETWEEN $1::real - $3::real AND $1::real + $3::real) AND (ordered_notes.location_longitude BETWEEN $2::real - $3::real AND $2::real + $3::real) AND ordered_notes.time ' . $comparator . ' $4 LIMIT $5';
+	$sql_query = 'SELECT * FROM (SELECT id, time, location_latitude, location_longitude, votes, message FROM notes ORDER BY time ' . $sort_direction . ') AS ordered_notes WHERE (ordered_notes.location_latitude BETWEEN $1::real - $3::real AND $1::real + $3::real) AND (ordered_notes.location_longitude BETWEEN $2::real - $3::real AND $2::real + $3::real) AND ordered_notes.time ' . $comparator . ' $4 LIMIT $5';
 
 	$prepare_ret = pg_prepare($dbconn, 'get_local_notes', $sql_query);
 	if ($prepare_ret) {
