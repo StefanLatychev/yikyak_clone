@@ -102,6 +102,30 @@ function dbGetWorldwideNotes(	$maxnotes,
 
 
 /*
+ * Return entry associated with the given note_id on success, false otherwise.
+ */
+function dbGetNoteById($note_id) {
+	$dbconn = dbConnect();
+	$result = null;
+
+	$prep_ret = pg_prepare($dbconn, 'get_note_by_id', 'SELECT * FROM notes WHERE id = $1');
+	if ($prep_ret) {
+		$resultobj = pg_execute($dbconn, 'get_note_by_id', array($note_id));
+		if ($resultobj) {
+			$result = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+	return $result;			
+}
+
+
+/*
  * Insert given note into the database.
  */
 function dbInsertNote($user_id, $latitude, $longitude, $message) {
@@ -247,7 +271,7 @@ function dbUpdateVote($note_id, $user_id, $isUpvote, $oldVote) {
 
 
 /*
- * Return true if the given user has voted on the given note, false otherwise.
+ * Return entry if the given user has voted on the given note, false otherwise.
  */
 function dbGetVoteOnNote($note_id, $user_id) {
 	$dbconn = dbConnect();
