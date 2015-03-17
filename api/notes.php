@@ -213,7 +213,7 @@ function apiReportNote(&$request, &$response) {
 	/***** Verifiy input *****/
 	// note_id
 	if (!parameterExists($request, 'note_id') 
-		|| !whitelistString($request->note_id, WHITELIST_NUMERIC) 
+		|| !whitelistString($request->note_id, WHITELIST_NUMERIC))
 	{
 		$valid_input = false;
 		$response['errors'][] = 'Invalid note_id parameter';
