@@ -117,6 +117,7 @@ function initialize() {
 	$('.error').hide();
 	$('#login').appendTo('body');
 	//TODO(SLatychev): Prevent first note fetch to avoid worldwide fetch
+	return false;
 }
 
 
@@ -130,6 +131,7 @@ function initializeMap() {
 		mapTypeId:google.maps.MapTypeId.ROADMAP
 	};
 	map=new google.maps.Map(mapCanvas, mapProp);
+	return false;
 }
 
 
@@ -373,9 +375,17 @@ function noteVoteRequest(note_id, upvote) {
 	sendAPIRequest("api/notes.php", "PUT", payloadString, 
 			function(request_object) {
 				// TODO():
-				// get note of given id
-				// update its appears to 'applied vote' appearance		
-			});	
+				// get note of given id 
+				//alert(note_id);
+				var note = document.getElementById("note_"+note_id.toString());
+				// update its appears to 'applied vote' appearance
+				if(upvote == "t") {
+					note.votes ++;  		
+				} else if(upvote == "f") {
+					note.votes --;
+				}
+			});
+	return false;
 }
 
 
@@ -387,7 +397,8 @@ function noteReportRequest(note_is, reason) {
 	sendAPIRequest("api/report.php", "POST", payloadString, 
 			function(request_object) {
 				alert("Report has been sent. Thank you for keeping our timelines safe!");	
-			});	
+			});
+	return false;	
 }
 
 
@@ -488,14 +499,14 @@ function displayNotes(response_object) {
 		note_div.className = "note"; 
 		note_div.id = "note_" + notes[note].id;
 		
-		var note_fieldset = document.createElement("fieldset");
-		note_fieldset.id = "note_fieldset";
-		note_div.appendChild(note_fieldset);
+		//var note_fieldset = document.createElement("fieldset");
+		//note_fieldset.id = "note_fieldset";
+		//note_div.appendChild(note_fieldset);
 			
 			//Note message div
 			var note_message_div = document.createElement("div");
 			note_message_div.id = "note_message";
-			note_message_div.className = "note_message";
+			//note_message_div.className = "note_message";
 				
 				//Note message span
 				var note_message_span = document.createElement("span");
@@ -504,37 +515,41 @@ function displayNotes(response_object) {
 				note_message_span.innerHTML = notes[note].message;
 				note_message_div.appendChild(note_message_span);
 			
-			note_fieldset.appendChild(note_message_div);
+			note_div.appendChild(note_message_div);
 			
 			//Vote wrapper div
 			var vote_wrapper_div = document.createElement("div");
 			vote_wrapper_div.className = "wrapper_vote";
-			vote_wrapper_div.id = "wrapper_vote";
+			//vote_wrapper_div.id = "wrapper_vote";
 				
 				//Vote options wrapper div
 				var vote_wrapper_options_div = document.createElement("div");
 				vote_wrapper_options_div.className = "wrapper_vote_options";
-				vote_wrapper_options_div.id = "wrapper_vote_options";
+				//vote_wrapper_options_div.id = "wrapper_vote_options";
 					
 					//Upvote button
 					var upvote_button = document.createElement("button");
 					upvote_button.className = "upvote";
-					upvote_button.id = "upvote_btn";
+					upvote_button.id = "upvote_btn_"+notes[note].id;
 					upvote_button.value = "Upvote";
+					upvote_button.type = "button";
+					//upvote_button.onclick = noteVoteRequest(notes[note].id.toString(), 't');
 					upvote_button.innerHTML = "Upvote";
 					vote_wrapper_options_div.appendChild(upvote_button);
 					
 					//Downvote button
 					var downvote_button = document.createElement("button");
 					downvote_button.className = "downvote";
-					downvote_button.id = "downvote_btn";
+					downvote_button.id = "downvote_btn_"+notes[note].id;
 					downvote_button.value = "Downvote";
+					downvote_button.type = "button";
+					//downvote_button.onclick = noteVoteRequest(notes[note].id.toString(), 'f');
 					downvote_button.innerHTML = "Downvote";
 					vote_wrapper_options_div.appendChild(downvote_button);
 					
 				vote_wrapper_div.appendChild(vote_wrapper_options_div);
 			
-			note_fieldset.appendChild(vote_wrapper_div);
+			note_div.appendChild(vote_wrapper_div);
 			
 			//Note metadata div
 			var note_metadata_wrapper_div = document.createElement("div");
@@ -569,10 +584,11 @@ function displayNotes(response_object) {
 				
 				note_metadata_wrapper_div.appendChild(note_votecount_wrapper_div);
 			
-			note_fieldset.appendChild(note_metadata_wrapper_div);
+			note_div.appendChild(note_metadata_wrapper_div);
 			
 		document.getElementById('timeline').appendChild(note_div);
-	}	
+	}
+	return false;
 }
 
 
@@ -585,12 +601,15 @@ function getLocation() {
 	} else {
 		alert("Geolocation not supported");
 	}
+	return false;
 }
 	
 function getPosition(position) {
 	//alert("Latitude: "+position.coords.latitude+"\nLongitude: "+position.coords.longitude);
 	LATITUDE = position.coords.latitude;
 	LONGITUDE = position.coords.longitude;
+	
+	return false;
 }
 
 
@@ -651,5 +670,6 @@ function sendAPIRequest(
 			}
 		}
 	});
+	return false;
 }
 
