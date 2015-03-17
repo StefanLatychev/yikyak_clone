@@ -66,15 +66,15 @@ function whitelistString($string, $whitelist_regex) {
  * object and is not null or the empty string.
  */
 function parameterExists($object, $param_name) {
-	$exists = true;
+	$exists = false;
 
 	// Check that property exists
 	if (property_exists($object, $param_name)) {
 		// Check that value is not null or empty
-		if ($object->$param_name == null 
-					|| $object->$param_name == '') 
+		if ($object->$param_name != null 
+					&& $object->$param_name != '') 
 		{
-			$exists = false;
+			$exists = true;
 		}
 	}
 
