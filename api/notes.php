@@ -8,7 +8,6 @@ define('DEFAULT_NUM_NOTES', 10);
 
 
 
-// VERIFIED
 /*
  * Gets notes from the database based on the given request parameters.
  */
@@ -16,54 +15,103 @@ function apiGetNotes(&$request, &$response) {
 	$max_notes = DEFAULT_NUM_NOTES;
 	$timestamp = null;
 	$notes = null;
+	$valid_input = true;
 
 	// Make sure user is authenticated	
 	if (!isAuthenticated($response)) {
 		return;
 	}
 
-	// TODO(validation):
 
+	// Validate input
 	// Check if time present
 	if (property_exists($request, 'time')) {
-		$timestamp = $request->time->timestamp;
+		if (property_exists($request->time, "timestamp") 
+			&& whitelistString($request->time->timestamp, 
+					WHITELIST_REGEX_UTC_TIMESTAMP)) 
+		{
+			$timestamp = $request->time->timestamp;
+		} else {
+			// Bad input
+			$valid_input = false;
+			$response['errors'][] = 'Invalid timestamp parameter';
+		}
 
 		// Adjust search direction
-		switch ($request->time->direction) {
-			case 'after':
-				$get_fwd_in_time = true;
-				break;
+		if (property_exists($request->time, "direction")) {
+			switch ($request->time->direction) {
+				case 'after':
+					$get_fwd_in_time = true;
+					break;
 
-			case 'before':
-				$get_fwd_in_time = false;
-				break;
+				case 'before':
+					$get_fwd_in_time = false;
+					break;
 
-			default:
-				// Bad parameter value
-				$response['errors'][] = 'Invalid time direction value';
-				$response['status'] = STATUS_BAD_REQUEST;
-				return;
+				default:
+					// Bad parameter value
+					$response['errors'][] = 'Invalid time direction value';
+					$response['status'] = STATUS_BAD_REQUEST;
+					return;
+			}
+		} else {	
+			// Bad input
+			$valid_input = false;
+			$response['errors'][] = 'Invalid direction parameter';
 		}
 	}
 
 	// Check if max_notes present
 	if (property_exists($request, 'max_notes')) {
-		$max_notes = $request->max_notes;
+		if (whitelistString($request->max_notes, WHITELIST_NUMBERIC)) {
+			$max_notes = $request->max_notes;
+		} else {
+			// Bad input
+			$valid_input = false;
+			$response['errors'][] = 'Invalid max_notes parameter';
+		}
 	}
 
 	// Check if location present
-	if (!property_exists($request, 'location')) {
-		$notes = dbGetWorldwideNotes($max_notes, 
-						$timestamp, 
-						$get_fwd_in_time);
-	} else {
+	if (property_exists($request, 'location')) {
+		if (!property_exists($request->location, 'latitude') 
+			|| !whitelistString($request->location->latitude, 
+						WHITELIST_REGEX_LOCATION)) 
+		{
+			$valid_input = false;
+			$response['errors'][] = 'Invalid latitude parameter';
+		}
+
+		if (!property_exists($request->location, 'longitude') 
+			|| !whitelistString($request->location->longitude, 
+						WHITELIST_REGEX_LOCATION)) 
+		{
+			$valid_input = false;
+			$response['errors'][] = 'Invalid longitude parameter';
+		}
+	}
+
+	// Confirm that all input was valid
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return;
+	}
+	
+
+	// Perform query for notes
+	if (property_exists($request, 'location')) {
 		$notes = dbGetLocalNotes($max_notes, 
 					$request->location->latitude, 
 					$request->location->longitude, 
 					$timestamp, 
 					$get_fwd_in_time);
+	} else {
+		$notes = dbGetWorldwideNotes($max_notes, 
+						$timestamp, 
+						$get_fwd_in_time);
 	}
 
+	// Check query success
 	if ($notes) {
 		// Query succeeded
 		$response['notes'] = $notes;
@@ -78,12 +126,13 @@ function apiGetNotes(&$request, &$response) {
 
 
 
-// VERIFIED
 /*
- * Submit a note to the database.
+ * Submit a note to the database. Escapes all message character to html 
+ * encoding equivalents if available before inserting into database.
  */
 function apiSubmitNote(&$request, &$response) {
 	$safe_note_message = null;
+	$valid_input = true;
 
 	// Make sure user is authenticated	
 	if (!$user_id = isAuthenticated($response)) {
@@ -91,12 +140,49 @@ function apiSubmitNote(&$request, &$response) {
 	}
 
 	// TODO(sdsmith): input validation
+	// Check location
+	if (property_exists($request, 'location')) {
+		// latitude
+		if (!property_exists($request->location, 'latitude') 
+			|| !whitelistString($request->location->latitude, 
+						WHITELIST_REGEX_LOCATION))
+		{
+			$valid_input = false;
+			$response['errors'][] = 'Invalid latitude parameter';
+		}
 
-	// Escape all escapable characters with their html encoding equivalent
-	// so the text is safe to put directly into an html page.
-	$safe_note_message = htmlentities($request->message, ENT_QUOTES);
+		// longitude
+		if (!property_exists($request->location, 'latitude') 
+			|| !whitelistString($request->location->latitude, 
+						WHITELIST_REGEX_LOCATION))
+		{
+			$valid_input = false;
+			$response['errors'][] = 'Invalid longitude parameter';
+		}
+	} else {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid location parameter';
+	}
 
-	
+	// Check message
+	if (propery_exists($request, 'message')) {
+		// Escape all escapable characters with their html encoding 
+		// equivalent so the text is safe to put directly into an html 
+		// page.
+		$safe_note_message = htmlentities($request->message, 	
+							ENT_QUOTES);
+	} else {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid message parameter';
+	}
+
+	// Confirm if valid input
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return;
+	}
+
+	// Insert note into database	
 	if (dbInsertNote($user_id, $request->location->latitude, 
 			$request->location->longitude, $safe_note_message)) {
 		$response['status'] = STATUS_OK;
