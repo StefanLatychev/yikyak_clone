@@ -65,7 +65,7 @@ function apiGetNotes(&$request, &$response) {
 
 	// Check if max_notes present
 	if (parameterExists($request, 'max_notes')) {
-		if (whitelistString($request->max_notes, WHITELIST_NUMBERIC)) {
+		if (is_int($request->max_notes)) {
 			$max_notes = $request->max_notes;
 		} else {
 			// Bad input
@@ -77,16 +77,14 @@ function apiGetNotes(&$request, &$response) {
 	// Check if location present
 	if (parameterExists($request, 'location')) {
 		if (!parameterExists($request->location, 'latitude') 
-			|| !whitelistString($request->location->latitude, 
-						WHITELIST_REGEX_LOCATION)) 
+			|| !is_numeric($request->location->longitude)) 
 		{
 			$valid_input = false;
 			$response['errors'][] = 'Invalid latitude parameter';
 		}
 
 		if (!parameterExists($request->location, 'longitude') 
-			|| !whitelistString($request->location->longitude, 
-						WHITELIST_REGEX_LOCATION)) 
+			|| !is_numeric($request->location->longitude)) 
 		{
 			$valid_input = false;
 			$response['errors'][] = 'Invalid longitude parameter';
