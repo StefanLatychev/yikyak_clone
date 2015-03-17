@@ -156,7 +156,6 @@ function dbUpdateNoteVoteCount($note_id, $vote_delta) {
  * Insert a user's vote on a particular note into the database.
  * @param isUpvote	't' if the vote is an upvote, 'f' otherwise
  */
-// TODO(sdsmith): Update note vote count
 // NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
 // accepted by postgres.
 function dbInsertVote($note_id, $user_id, $isUpvote) {
@@ -173,8 +172,8 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 			} else {
 				$vote_delta = -1;
 			}
-
-			$success = dbUpdateNoteVoteCount($note_id, $vote_delta);
+			
+			$success = true;
 		} else {
 			die("Query failed: " . pg_last_error());
 		}
@@ -183,6 +182,12 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
 	}
 
 	dbClose($dbconn);
+
+	// Update vote count if we succeeded
+	if ($success) {
+		$success = dbUpdateNoteVoteCount($note_id, $vote_delta);
+	}
+
 	return $success;
 }
 
@@ -192,10 +197,51 @@ function dbInsertVote($note_id, $user_id, $isUpvote) {
  * Updates an existing vote in the database to the new value.
  */
 // TODO(sdsmith): Update note vote count
-// NOTE(sdsmith): $isUpvote should be a string interpretation of a boolean 
-// accepted by postgres.
-function dbUpdateVote($note_id, $user_id, $isUpvote) {
-	
+// NOTE(sdsmith): $isUpvote and $oldVote should be a string interpretation of a 
+// boolean accepted by postgres. In this case we expect 't' or 'f'.
+function dbUpdateVote($note_id, $user_id, $isUpvote, $oldVote) {
+	$dbconn = dbConnect();
+	$success = false;
+	$update_vote = false;
+
+	$prepare_ret = pg_prepare($dbconn, 'update_vote', 'UPDATE notes_votes SET upvote = $3 WHERE note_id = $1 and user_id = $2');
+	if ($prepare_ret) {
+		$resultobj = pg_execute($dbconn, 'update_vote', array($note_id, $user_id, $isUpvote));
+		if ($resultobj) {			
+			if ($isUpvote != $oldVote) {
+				// Update vote count for corresponding note
+				if ($isUpvote == 't') {
+					$vote_delta = 1;
+				} else {
+					$vote_delta = -1;
+				}
+
+				// Modify delta based on old vote
+				if ($oldVote == 't') {
+					$vote_delta -= 1;
+				} else {
+					$vote_delta += 1;
+				}
+				
+				$update_vote = true;
+			}
+
+			$success = true;
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+
+	// Update vote count if we succeeded
+	if ($update_vote) {
+		$success = dbUpdateNoteVoteCount($note_id, $vote_delta);
+	}
+
+	return $success;
 }
 
 
@@ -204,7 +250,6 @@ function dbUpdateVote($note_id, $user_id, $isUpvote) {
  * Return true if the given user has voted on the given note, false otherwise.
  */
 function dbGetVoteOnNote($note_id, $user_id) {
-	// TODO(sdsmith):
 	$dbconn = dbConnect();
 	$result = null;
 
@@ -223,6 +268,7 @@ function dbGetVoteOnNote($note_id, $user_id) {
 		die("Prepared statement failed: " . pg_last_error());
 	}
 
+	dbClose($dbconn);
 	return $result;
 }
 
@@ -231,7 +277,8 @@ function dbGetVoteOnNote($note_id, $user_id) {
 /*
  * Insert a user's report for the given note.
  */
-// TODO(sdsmith): update the note entry that it has been reported.
+// TODO(sdsmith): update the note entry that it has been reported. Will have
+// to modify schema to accomodate this.
 function dbInsertReport($note_id, $reporter_id, $reason) {
 	$dbconn = dbConnect();
 	$success = false;
@@ -252,17 +299,6 @@ function dbInsertReport($note_id, $reporter_id, $reason) {
 	dbClose($dbconn);
 	return $success;
 }
-
-
-
-/*
- * Removes given note from the database. User id must be provided so there is a
- * record of who deleted it.
- */
-function dbRemoveNote($note_id, $user_id) {
-	// TODO(sdsmith):
-}
-
 
 
 

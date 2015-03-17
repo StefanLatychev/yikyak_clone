@@ -221,18 +221,19 @@ function apiReportNote(&$request, &$response) {
 /*
  * Apply vote to a post (either positive or negative).
  */
+// TODO(sdsmith): check if note exists
 function apiVoteNote(&$request, &$response) {
 	if (!$user_id = isAuthenticated($response)) {
 		return;
 	}
 
 	// TODO(sdsmith): Verify input
-	// Confirm note exists.
+	// Confirm note being voted on exists
 
 	// Check if user has voted the note previously
-	if (dbGetVoteOnNote($request->note_id, $user_id)) {
+	if ($vote_info = dbGetVoteOnNote($request->note_id, $user_id)) {
 		// Previous vote entry, update it
-		$success = dbUpdateVote($request->note_id, $user_id, $request->upvote);
+		$success = dbUpdateVote($request->note_id, $user_id, $request->upvote, $vote_info['upvote']);
 	} else {
 		// New vote entry
 		$success = dbInsertVote($request->note_id, $user_id, $request->upvote);
@@ -291,13 +292,13 @@ switch($_SERVER['REQUEST_METHOD']) {
 		// Decode request
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
 		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
-			apiVote($request, $response);
+			apiVoteNote($request, $response);
 		} 
 		break;
 
 	case 'GET':
 		// Decode request
-		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		$REQUEST_VARS = &$_GET;
 		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiGetNotes($request, $response);	
 		}
