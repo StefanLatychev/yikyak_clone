@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>API Documentation</title>
+</head>
+<body>
+<h1>API Documentation</h1>
+<hr>
+
+<p>YikYak Clone API uses the principle of RESTful API. HTTP status codes are returned on all API responses.<p>
+
+<hr>
+<h1>Usage</h1>
+
+<p>All api can be accessed via http requests to the appropriate api file. The type of http request made will depend of what type of request will be made. Http request types govern the following types of actions:</p>
+
+<table border="1">
+<tr><td>HTTP Request type</td><td>Function</td><td>Description</td></tr>
+<tr><td>GET</td><td>retrieve</td><td>search/fetch item(s)</td></tr>
+<tr><td>PUT</td><td>update</td><td>update an item</td></tr>
+<tr><td>POST</td><td>create</td><td>create a new item</td></tr>
+<tr><td>DELETE</td><td>delete</td><td>remove item</td></tr>
+</table>
+
+<p>Each API request will have a parameter format indicated on in it's documentation for the its specific parameters. All formatted parameters are passed through an http <code>request</code> parameter.<p>
+
+<p>Note that using the API requires authentication (in some cases), and a cookie must be sent every request to confirm authentication status.<p>
+
+
+<hr>
+<h1>Authentication</h1>
+<p>Server requires an https connection, and cookies enabled to authenticate and accept requests.</p>
+
+<p>If a <code>status</code> of <code>401</code> unauthorized is received in response to a request, your API session key is invalid and you need to authenticate (potentially again).</p>
+
+<hr>
+<h1>API Requests</h1>
+
+<h2><code>/api/authentication.php</code></h2>
+<table>
+<tr><td></td><td></td><td>Working?</td><td>Input Validation?</td></tr>
+<tr><td>POST</td><td><a href="authentication/login.html">login</a></td><td>Y</td><td>Y</td></tr>
+<tr><td>DELETE</td><td><a href="authentication/logout.html">logout</a></td><td>Y</td><td>Y</td></tr>
+</table>
+
+<h2><code>/api/user.php</code></h2>
+<table>
+<tr><td></td><td></td><td>Working?</td><td>Input Validation?
+<tr><td>POST</td><td><a href="user/register.html">register new user</a></td><td>Y</td><td>Y</td></tr>
+<tr><td>PUT</td><td><a href="user/update.html">update user information</a></td><td>Y</td><td>Y</td></tr>
+<tr><td>GET</td><td><a href="user/information.html">get user information</a></td><td>Y</td><td>Y</td></tr>
+</table>
+
+<h2><code>/api/notes.php</code></h2>
+<table>
+<tr><td></td><td></td><td>Working?</td><td>Input Validation?</td></td>
+<tr><td>POST</td><td><a href="notes/submit.html">submit note</a></td><td>Y</td><td>Y</td></tr>
+<tr><td>PUT</td><td><a href="notes/vote.html">vote on note</a></td><td>Y</td><td>Y</td></tr>
+<tr><td>GET</td><td><a href="notes/notes.html">get notes</a></td><td>Y</td><td>Y</td></tr>
+</table>
+
+<h2><code>/api/report.php</code></h2>
+<table>
+<tr><td></td><td></td><td>Working?</td><td>Input Validation?</td></tr>
+<tr><td>POST</td><td><a href="report/report.html">report note</a></td><td>Y</td><td>Y</td></tr>
+</table>
+
+</body>
+</html>

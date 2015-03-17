@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vote - API Documentation</title>
+</head>
+<body>
+<h1>PUT /api/notes.php Vote on a note</h1>
+<hr>
+
+<p>Applies a vote to a note.</p>
+
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"note_id": "",
+	"upvote": ""	
+}
+</pre></code>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>note_id</td><td>Y</td><td>Id corresponding to the note to apply the vote to</td></tr>
+<tr><td>upvote</td><td>Y</td><td><code>t</code> if the vote is a positive one, <code>f</code> if the vote is negative</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": ""
+}
+</pre></code>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description/td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request/td></tr>
+<tr><td>status</td><td>HTTP status code of request/td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the vote was successfully applied.</p>
+
+</body>
+</html>

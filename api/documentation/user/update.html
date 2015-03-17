@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get notes - API Documentation</title>
+</head>
+<body>
+<h1>PUT /api/user.php Update User Information</h1>
+<hr>
+
+<p>Updates user information. Only updates the information provided.</p>
+
+<ul>
+<li>Emails must be of correct format with alpha-numeric characters, and up to 50 characters in length.</li>
+<li>Phone number must only contain digits, and between 7 and 15 characters in length.</li>
+<li>Passwords must be between 8 and 100 characters in length and accepts all alpha-numeric values and the symbols <code>~!@#$%^&*()</code>.</li>
+</ul>
+
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"current_email": "",
+	"current_password": "",
+	"new_email1": "",
+	"new_email2": "",
+	"new_password1": "",
+	"new_password2": "",
+	"new_phone_number": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>current_email</td><td>Y</td><td>Current user email</td></tr>
+<tr><td>current_password</td><td>Y</td><td>Current user password</td></tr>
+<tr><td>new_email1</td><td>N</td><td>New email</td></tr>
+<tr><td>new_email2</td><td>-</td><td>Confirmation of new email</td></tr>
+<tr><td>new_password1</td><td>N</td><td>New user password</td></tr>
+<tr><td>new_password2</td><td>-</td><td>Confirmation of new user password</td></tr>
+<tr><td>new_phone_number</td><td>N</td><td>New phone number</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the account information was successfully updated.</p>
+
+</body>
+</html>

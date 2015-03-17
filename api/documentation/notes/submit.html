@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Submit Notes - API Documentation</title>
+</head>
+<body>
+<h1>POST /api/notes.php Submit note</h1>
+<hr>
+
+</p>Submit a note to the database.</p>
+
+
+<h2>URL</h2>
+
+
+<h2>Information<h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"location": {
+		"latitude": (float),
+		"longitude": (float),
+	},
+	"message": ""
+}
+</pre></code>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>location</td><td>Y</td><td>Location the note was posted from (consists of latitude and longitude)</td></tr>
+<tr><td>latitude</td><td>-</td><td>Latitude of location</td></tr>
+<tr><td>longitude</td><td>-</td><td>Longitude of location</td></tr>
+<tr><td>message</td><td>Y</td><td>Message of the note</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": ""
+}
+</pre></code>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the note was successfully submitted.</p>
+</body>
+</html>
