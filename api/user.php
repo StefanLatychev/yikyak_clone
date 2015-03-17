@@ -128,7 +128,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 	
 	// Make sure user is authenticated
-	if (!$requester_info = isAuthenticated($response)) {
+	if (!$requester_id = isAuthenticated($response)) {
 		return $response;
 	}
 
@@ -152,7 +152,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	$user_info = dbAuthenticateUser($request->current_email, 
 						$request->current_password);
 	// Confirm credentials provided match the session key owner
-	if (!$user_info || $requester_info['id'] != $user_info['id']) {
+	if (!$user_info || $requester_id != $user_info['id']) {
 		// Either credentials were bad, or user entered another user's 
 		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
@@ -182,7 +182,7 @@ function apiGetUserInfo(&$encoded_request) {
 	$valid_input = true;
 
 	// Make sure user is authenticated
-	if (!$requester_info = isAuthenticated($response)) {
+	if (!$requester_id = isAuthenticated($response)) {
 		return $response;
 	}
 
@@ -220,7 +220,7 @@ function apiGetUserInfo(&$encoded_request) {
 	$user_info = dbAuthenticateUser($request->email, $request->password);
 
 	// Confirm credentials provided match the session key owner
-	if (!$user_info || $requester_info['id'] != $user_info['id']) {
+	if (!$user_info || $requester_id != $user_info['id']) {
 		// Either credentials were bad, or user entered another user's 
 		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
