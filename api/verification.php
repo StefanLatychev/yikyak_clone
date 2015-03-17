@@ -58,4 +58,31 @@ function whitelistString($string, $whitelist_regex) {
 
 	return $valid;
 }
+
+
+
+/*
+ * Return true if the given parameter exists as a direct member of the given 
+ * object and is not null or the empty string.
+ */
+function parameterExists($object, $param_name) {
+	$exists = true;
+
+	// Check that property exists
+	if (property_exists($object, $param_name)) {
+		// Check that value is not null or empty
+		if ($object->$param_name == null 
+					|| $object->$param_name == '') 
+		{
+			$exists = false;
+		}
+	}
+
+	return $exists;
+}
+
+
+
+
+
 ?>

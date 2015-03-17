@@ -12,7 +12,6 @@ require_once('verification.php');
 function apiRegisterNewUser(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 	$valid_input = true;
-	$empty_phone_number = false;
 
 	// Decode request
 	// NOTE(sdsmith): makes assumption it's a json request
@@ -22,16 +21,16 @@ function apiRegisterNewUser(&$encoded_request) {
 	
 	// Verifiy input
 	// Check email is present
-	if (!property_exists($request, 'email1') 
-				|| !property_exists($request, 'email2')) 
+	if (!parameterExists($request, 'email1') 
+				|| !parameterExists($request, 'email2')) 
 	{
 		$valid_input = false;
 		$response['errors'][] = 'Email and confirmation email not present';
 	}
 
 	// Check password is present
-	if (!property_exists($request, 'password1') 
-				|| !property_exists($request, 'password2')) 
+	if (!parameterExists($request, 'password1') 
+				|| !parameterExists($request, 'password2')) 
 	{
 		$valid_input = false;
 		$response['errors'][] = 'Password and confirmation password not present';
@@ -56,20 +55,12 @@ function apiRegisterNewUser(&$encoded_request) {
 	}
 
 	// phone_number
-	if (!property_exists($request, 'phone_number')) {
-		// Check if phone number is empty
-		$empty_phone_number = $request->phone_number == '';
-		if ($empty_phone_number) {
-			$request->phone_number = null;
-		}
-
-		if (!$empty_phone_number &&
-			!whitelistString($request->phone_number, 
+	if (!parameterExists($request, 'phone_number') 
+		|| !whitelistString($request->phone_number, 
 					WHITELIST_REGEX_PHONE_NUMBER)) 
-		{
-			$valid_input = false;
-			$response['errors'][] = 'Invalid phone_number parameter';
-		}
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid phone_number parameter';
 	}
 
 	// password1
@@ -95,7 +86,7 @@ function apiRegisterNewUser(&$encoded_request) {
 		$valid_input = false;
 		$response['errors'][] = 'Email already registered';
 	}
-	if (!$empty_phone_number 
+	if (parameterExists($request, 'phone_number') 
 			&& dbExistsPhoneNumber($request->phone_number)) {
 		$valid_input = false;
 		$response['errors'][] = 'Phone number already registered';
@@ -204,7 +195,7 @@ function apiGetUserInfo(&$encoded_request) {
 
 	// Verify input
 	// Email	
-	if (!property_exists($request, 'email') 
+	if (!parameterExists($request, 'email') 
 		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL)) 
 	{
 		$valid_input = false;
@@ -212,7 +203,7 @@ function apiGetUserInfo(&$encoded_request) {
 	}
 
 	// Password
-	if (!property_exists($request, 'password') 
+	if (!parameterExists($request, 'password') 
 		|| !whitelistString($request->password, 
 					WHITELIST_REGEX_PASSWORD)) 
 	{
