@@ -4,15 +4,15 @@ define("LEN_MAX_PASSWORD", 100);
 define("WHITELIST_REGEX_PASSWORD", "/[\w\d\s~!@#$%^&*()]+/");
 
 define("LEN_MAX_EMAIL", 50);
-define("WHITELIST_REGEX_EMAIL", "/[\w\d\]+@[\w\d]+\.[\w\d\.]/");
+define("WHITELIST_REGEX_EMAIL", "/[\w\d\.]+@[\w\d]+\.[\w\d\.]+/");
 
 define("LEN_MIN_PHONE_NUMBER", 7);
 define("LEN_MAX_PHONE_NUMBER", 15);
 define("WHITELIST_REGEX_PHONE_NUMBER", "/[\d]+/");
 
-define("WHITELIST_REGEX_NOTE", "/[\w\d\s~!@#$%^&*()]+/");
+define("WHITELIST_REGEX_NOTE", "/[\w\d\s~!@#$%^&*()-=+]+/");
 
-define("WHITELIST_REGEX_LOCATION", "/[-\.\d]+/");
+define("WHITELIST_REGEX_LOCATION", "/^-?[\.\d]+/");
 
 define("WHITELIST_REGEX_UTC_TIMESTAMP", "/\d\d-\d\d-\d\d \d\d:\d\d:\d\d/");
 
