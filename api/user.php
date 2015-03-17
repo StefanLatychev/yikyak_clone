@@ -119,7 +119,7 @@ function apiGetUserInfo(&$encoded_request) {
 	if (!$user_info = dbAuthenticateUser($request->email, 
 						$request->password)
 		// Confirm credentials provided match the session key owner
-		|| $requester_info['id'] != $user_info['id'])) 
+		|| $requester_info['id'] != $user_info['id'])
 	{
 		// Either credentials were bad, or user entered another user's 
 		// credentials. Bad user.
