@@ -186,7 +186,8 @@ function apiSubmitNote(&$request, &$response) {
 
 	// Insert note into database	
 	if (dbInsertNote($user_id, $request->location->latitude, 
-			$request->location->longitude, $safe_note_message)) {
+			$request->location->longitude, $safe_note_message)) 
+	{
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
@@ -201,12 +202,49 @@ function apiSubmitNote(&$request, &$response) {
  * Report note as being inappropriate.
  */
 function apiReportNote(&$request, &$response) {
+	$valid_input = true;
+
+
 	if (!$user_id = isAuthenticated($response)) {
 		return;
 	}
 
 	// TODO(sdsmith): Verifiy input
-	// Confirm note exists.
+	/***** Verifiy input *****/
+	// note_id
+	if (!parameterExists($request, 'note_id') 
+		|| !whitelistString($request->note_id, WHITELIST_NUMERIC) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid note_id parameter';
+	}
+	// reason
+	if (!parameterExists($request, 'reason') 
+		|| !whitelistString($request->reason, 
+					WHITELIST_REGEX_PHONE_NUMBER)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid reason parameter';
+	}
+
+	// Confirm valid input
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+	}
+
+	// Confirm note being reported exists
+	if (!dbGetNoteById($request->note_id)) {
+		$response['errors'][] = 'Note being reported does not exists';
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
+
+	// Check that a report does not already exists
+	if (!dbGetReport($request->note_id, $request->user_id)) {
+		$response['errors'][] = 'Report already submitted for note';
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
 
 	// Submit report
 	if (dbInsertReport($request->note_id, $user_id, $request->reason)) {
@@ -252,7 +290,7 @@ function apiVoteNote(&$request, &$response) {
 		return;
 	}
 
-	// Confirm note being voted on exists (dbGetNoteById)
+	// Confirm note being voted on exists
 	if (!dbGetNoteById($request->note_id)) {
 		$response['errors'][] = 'Note with given id does not exist';
 		$response['status'] = STATUS_BAD_REQUEST;
@@ -307,11 +345,15 @@ switch($_SERVER['REQUEST_METHOD']) {
 		}
 
 		// Determine which API call is being requested
-		if ($request->location && $request->message) {
+		if (parameterExists($request, 'location') 
+				&& parameterExists($request, 'message'))
+		{
 			// POST Submit note
 			apiSubmitNote($request, $response);
 			
-		} elseif ($request->note_id && $request->reason) {
+		} elseif (parameterExists($request, 'note_id') 
+				&& parameterExists($request, 'reason')) 
+		{
 			// POST Report note
 			apiReportNote($request, $response);
 			

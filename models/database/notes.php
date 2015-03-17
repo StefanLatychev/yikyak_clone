@@ -299,6 +299,31 @@ function dbGetVoteOnNote($note_id, $user_id) {
 
 
 /*
+ * Return the report entry for the given note by the given user, null/false 
+ * otherwise.
+ */
+function dbGetReport($note_id, $user_id) {
+	$dbconn = dbConnect();
+	$result = null;
+
+	$prep_ret = pg_prepare($dbconn, 'get_report', 'SELECT * FROM notes_reports WHERE note_id = $1 AND reporter_id = $2');
+	if ($prep_ret) {
+		$resultobj = pg_execute($dbconn, 'get_report', array($note_id, $user_id));
+		if ($resultobj) {
+			$result = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
+		} else {
+			die("Query failed: " . pg_last_error());
+		}
+	} else {
+		die("Prepared statement failed: " . pg_last_error());
+	}
+
+	dbClose($dbconn);
+	return $result;
+}
+
+
+/*
  * Insert a user's report for the given note.
  */
 // TODO(sdsmith): update the note entry that it has been reported. Will have
@@ -308,7 +333,7 @@ function dbInsertReport($note_id, $reporter_id, $reason) {
 	$success = false;
 	$timestamp = date('Y-m-d H:i:s');
 
-	$prepare_ret = pg_prepare($dbconn, 'insert_report', 'INSERT INTO notes_reported (note_id, reporter_id, time, reason) VALUES ($1, $2, $3, $4)');
+	$prepare_ret = pg_prepare($dbconn, 'insert_report', 'INSERT INTO notes_reports (note_id, reporter_id, time, reason) VALUES ($1, $2, $3, $4)');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_report', array($note_id, $reporter_id, $timestamp, $reason));
 		if ($resultobj) {
