@@ -221,14 +221,43 @@ function apiReportNote(&$request, &$response) {
 /*
  * Apply vote to a post (either positive or negative).
  */
-// TODO(sdsmith): check if note exists
 function apiVoteNote(&$request, &$response) {
+	$valid_input = true;
+
 	if (!$user_id = isAuthenticated($response)) {
 		return;
 	}
 
-	// TODO(sdsmith): Verify input
-	// Confirm note being voted on exists
+	/***** Verify input *****/
+	// Check required feilds are present and have good values
+	// note_id
+	if (!parameterExists($request, 'note_id') 
+		|| !whitelistString($request->note_id, WHITELIST_NUMERIC)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid note_id parameter';
+	}
+	// upvote
+	if (!parameterExists($request, 'upvote') 
+		|| !($request->upvote == 't' || $request->upvote == 'f'))
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid upvote parameter';
+	}
+
+	// Confirm valid input
+	if (!$valid_input) {
+		$responce['status'] = STATUS_BAD_REQUEST;
+		return;
+	}
+
+	// Confirm note being voted on exists (dbGetNoteById)
+	if (!dbGetNoteById($request->note_id)) {
+		$response['errors'][] = 'Note with given id does not exist';
+		$response['status'] = STATUS_BAD_REQUEST;
+		return;
+	}
+	
 
 	// Check if user has voted the note previously
 	if ($vote_info = dbGetVoteOnNote($request->note_id, $user_id)) {
