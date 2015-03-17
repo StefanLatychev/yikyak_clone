@@ -204,8 +204,8 @@ function apiGetUserInfo(&$encoded_request) {
 	}
 
 	// Password
-	if (!property_exists($request, 'email') 
-		|| !whitelistString($request->email, 
+	if (!property_exists($request, 'password') 
+		|| !whitelistString($request->password, 
 					WHITELIST_REGEX_PASSWORD)) 
 	{
 		$valid_input = false;
