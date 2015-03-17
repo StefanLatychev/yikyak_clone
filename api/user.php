@@ -373,7 +373,12 @@ switch($_SERVER['REQUEST_METHOD']) {
 		break;
 
 	case 'GET':
-		$REQUEST_VARS = &$_GET;
+		// Decode request
+		if (isset($_REQUEST['request'])) {
+			$REQUEST_VARS = &$_REQUEST;
+		} else {
+			parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		}
 		$response = apiGetUserInfo($REQUEST_VARS['request']);
 		break;
 

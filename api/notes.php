@@ -294,6 +294,9 @@ $REQUEST_VARS = null;
 $resquest = null;
 $response = getAPIResponseTemplate();
 
+// Get request parameters
+
+
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		// Decode request
@@ -327,7 +330,11 @@ switch($_SERVER['REQUEST_METHOD']) {
 
 	case 'GET':
 		// Decode request
-		$REQUEST_VARS = &$_GET;
+		if (isset($_REQUEST['request'])) {
+			$REQUEST_VARS = &$_REQUEST;
+		} else {
+			parse_str(file_get_contents("php://input"), $REQUEST_VARS);
+		}
 		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiGetNotes($request, $response);	
 		}
