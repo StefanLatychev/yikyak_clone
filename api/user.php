@@ -55,8 +55,8 @@ function apiRegisterNewUser(&$encoded_request) {
 	}
 
 	// phone_number
-	if (!parameterExists($request, 'phone_number') 
-		|| !whitelistString($request->phone_number, 
+	if (parameterExists($request, 'phone_number') 
+		&& !whitelistString($request->phone_number, 
 					WHITELIST_REGEX_PHONE_NUMBER)) 
 	{
 		$valid_input = false;
