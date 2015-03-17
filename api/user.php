@@ -57,20 +57,20 @@ function apiRegisterNewUser(&$encoded_request) {
 	// phone_number
 	if (!property_exists($request, 'phone_number') 
 		|| !whitelistString($request->phone_number, 
-					WHITELIST_REGEX_EMAIL)) 
+					WHITELIST_REGEX_PHONE_NUMBER)) 
 	{
 		$valid_input = false;
 		$response['errors'][] = 'Invalid phone_number parameter';
 	}
 
 	// password1
-	if (!whitelistString($request->password1, WHITELIST_REGEX_EMAIL)) {
+	if (!whitelistString($request->password1, WHITELIST_REGEX_PASSWORD)) {
 		$valid_input = false;
 		$response['errors'][] = 'Invalid password1 parameter';
 	}
 
 	// password2
-	if (!whitelistString($request->password2, WHITELIST_REGEX_EMAIL)) {
+	if (!whitelistString($request->password2, WHITELIST_REGEX_PASSWORD)) {
 		$valid_input = false;
 		$response['errors'][] = 'Invalid password2 parameter';
 	}
