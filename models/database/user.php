@@ -110,16 +110,16 @@ function dbUpdateUserInfo($user_id, $email=null, $phoneNumber=null, $password=nu
 	}
 
 	// Check which values to change
-	if ($email && $insert_status) {
+	if ($email && $email != '' && $insert_status) {
 		$insert_status = pg_execute($dbconn, 'update_user_email', array($email, $user_id));
 	}
 
-	if ($phoneNumber && $insert_status) {
+	if ($phoneNumber && $phoneNumber != '' && $insert_status) {
 		$insert_status = pg_execute($dbconn, 'update_user_phone_number', array($phoneNumber, $user_id));
 	}
 
 
-	if ($password && $insert_status) {
+	if ($password && $password != '' && $insert_status) {
 		$insert_status = pg_execute($dbconn, 'update_user_password', array($password, $user_id));
 	}
 

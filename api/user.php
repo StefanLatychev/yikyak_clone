@@ -152,33 +152,116 @@ function apiRegisterNewUser(&$encoded_request) {
  * Update the current user's information.
  */
 function apiUpdateUserInfo(&$encoded_request) {
-	var_dump($encoded_request);
 	$response = getAPIResponseTemplate();
-	
+	$valid_input = true;
+
+
 	// Make sure user is authenticated
 	if (!$requester_id = isAuthenticated($response)) {
 		return $response;
 	}
 
-	var_dump($encoded_request);
 
 	// Decode request
 	// NOTE(sdsmith): makes assumption it's a json request
 	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		echo("decode failed");
 		return $response;
 	}
-	var_dump($encoded_request);
-	var_dump($request);
 
 	// TODO(sdsmith): verifiy input
-	//dbExistsEmail
-	//dbExistsPhoneNumber
+	/***** Verify input *****/
+	// Check current email and password are provided
+	if (!parameterExists($request, 'current_email') 
+			|| !parameterExists($request, 'current_password')) 
+	{
+		$response['errors'][] = 'Current email and password not provided';
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
 
+	/*** Check each parameter's value ***/
+	// email
+	$exists_email1 = parameterExists($request, 'new_email1');
+	$exists_email2 = parameterExists($request, 'new_email2');
+	if ($exists_email1 || $exists_email2) {
+		if ($exists_email1 && $exists_email2) {
+			// check values
+			if (!whitelistString($request->new_email1, 
+						WHITELIST_REGEX_EMAIL)) 
+			{
+				$valid_input = false;
+				$request['errors'][] = 'Invalid new_email parameter';
+			} elseif ($request->new_email1 != $request->new_email2) {
+				$valid_input = false;
+				$request['errors'][] = 'New emails do not match';
+			}
+
+		} else {
+			// Both must be provided, not just one
+			$valid_input = false;
+			$response['errors'][] = 'Both new_email must be provided';
+		}
+	}
+
+	// password
+	$exists_pass1 = parameterExists($request, 'new_password1');
+	$exists_pass2 = parameterExists($request, 'new_password2');
+	if ($exists_pass1 || $exists_pass2) {
+		if ($exists_pass1 && $exists_pass2) {
+			// check values
+			if (!whitelistString($request->new_password1, 
+						WHITELIST_REGEX_PASSWORD)) 
+			{
+				$valid_input = false;
+				$request['errors'][] = 'Invalid new_password parameter';
+			} elseif ($request->new_password1 != $request->new_password2) {
+				$valid_input = false;
+				$request['errors'][] = 'New passwords do not match';
+			}
+		} else {
+			// Both must be provided, not just one
+			$valid_input = false;
+			$response['errors'][] = 'Both new_password must be provided';
+		}
+	}
+
+	// phone number
+	if (parameterExists($request, 'new_phone_number') 
+		&& !whitelistString($request->new_phone_number, 
+					WHITELIST_REGEX_PHONE_NUMBER)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid new_phone_number parameter';
+	}
+
+	// Confirm valid input
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
+
+	/*** Check that duplicate entries won't exist in db after update ***/
+	// email
+	if (parameterExists($request, 'new_email1') && dbExistsEmail($request->new_email1)) {
+		$valid_input = false;
+		$response['errors'][] = 'New email is already registered';
+	}
+	// phone number
+	if (parameterExists($request, 'new_phone_number') && dbExistsPhoneNumber($request->new_phone_number)) {
+		$valid_input = false;
+		$response['errors'][] = 'New phone number is already registered';
+	}
+
+	// Confirm no suplicates on insert
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $resposne;
+	}
 
 	// Validate user provided credentials
 	$user_info = dbAuthenticateUser($request->current_email, 
 						$request->current_password);
+
 	// Confirm credentials provided match the session key owner
 	if (!$user_info || $requester_id != $user_info['id']) {
 		// Either credentials were bad, or user entered another user's 
@@ -189,7 +272,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	}
 
 	// Update user information
-	if (dbUpdateUserInfo($user_info['id'], $request->new_email1, $request->new_password1)) {
+	if (dbUpdateUserInfo($user_info['id'], $request->new_email1, $request->new_phone_number, $request->new_password1)) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
@@ -287,6 +370,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'PUT':
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
 		$response = apiUpdateUserInfo($REQUEST_VARS['request']);
+		break;
 
 	case 'GET':
 		$REQUEST_VARS = &$_GET;
