@@ -1,10 +1,13 @@
 //Display Controller
 
 var username;
+var latitude;
+var longitude;
+var notePull;
 
 /*******************************Constructors******************************/
 
-//Constructor for Registraction api request object
+//Constructor for registraction api request object
 function packageRegistrationAPIRequest(email1, email2, phone, password, confirm) {
 	var request_payload = {
 		email1: email1,
@@ -27,11 +30,31 @@ function packageBasicAPIRequest(email, password) {
 }
 
 
+//Constructor for get notes api request object 
+function packageGetNotesAPIRequest(latitude, longitude, timestamp, direction, maxNotes) {
+	var location = {
+		latitude : latitude,
+		longitude : longitude
+	}
+	
+	var time = {
+		timestamp : timestamp,
+		direction : direction
+	}
+	
+	var notes = {
+		max_notes : maxNotes
+	}
+	
+	var request_payload = {
+		location,
+		time, 
+		notes
+	}
+	return request_payload;
+}
 
 //Add more constructors as needed
-
-
-
 
 
 
@@ -68,13 +91,20 @@ function changeDisplay(page_to_display) {
 	$('#'+page_to_display).show();
 	$('body > :not(#'+page_to_display+')').hide();
 	
+	
 	//Reinitialize map when we change to main page, this prevents
 	//the map from displaying incorrectly when we change from and back to it.
 	if(page_to_display === "main") {
 		initializeMap();
+		notePull = setInterval(
+			function notes() {
+				noteRequest(); 
+			}, 5000);
+	} else {
+		clearInterval(notePull);
 	}
-	
 	$('#'+page_to_display).appendTo('body');
+	return false;
 }
 
 
@@ -84,7 +114,7 @@ function changeDisplay(page_to_display) {
 
 
 
-/***************************Validation Functions****************************/
+/**********************Validation & Request Functions**************************/
 
 //Login validation, packaging, and sending as request to api
 //TODO(SLatychev): Add more rigorous validation checking
@@ -225,6 +255,17 @@ function authValidation() {
 }
 
 
+//Request server to get notes
+function noteRequest() {
+	var time = Date.now() / 1000 | 0;
+	var direction = "before";
+	
+	var payloadString = JSON.stringify(packageGetNotesAPIRequest(latitude, longitude, time, direction, ""));
+	sendAPIRequest("api/notes.php", "GET", payloadString, displayNotes);
+	return false;
+}
+
+
 //Request server to logout
 function logoutRequest() {
 	var payloadString = JSON.stringify({});
@@ -253,6 +294,7 @@ function registrationValidated(response_object) {
 //User has logged in, send to main page
 function loginValidated(response_object) {
 	changeDisplay('main');
+	getLocation();
 	return false;
 }
 
@@ -268,33 +310,78 @@ function logout() {
 function userInfo(response_object) {
 	changeDisplay('account');
 	
+	//If we've already asked for account info do not generate again
 	if(document.getElementById('account_info')) {
+		
 		return false;
 	}
 	
-	var account_info_form = document.createElement("fieldset");
-	var user_info_div = document.createElement("div");
-	user_info_div.id = "account_info";
-	account_info_form.appendChild(user_info_div);
+	//Create main div
+	var account_info_div = document.createElement("div");
+	account_info_div.id = "account_info";
 	
+	//Add field set to main div
+	var account_info_form = document.createElement("fieldset");
+	account_info_div.appendChild(account_info_form);
+	
+	//Get the user info object
 	var user_info = response_object.user_info;
 	for(var key in user_info){
+		//If user_info object has a key property
 		if(user_info.hasOwnProperty(key)){
+			
+			//Create a div for the the key value pair
 			var div_element = document.createElement("div");
 			div_element.id = "info_element";
-			user_info_div.appendChild(div_element);
+			account_info_form.appendChild(div_element);
+			
+			//Load key value data into div
 			var user_info_content = document.createTextNode(key+": "+user_info[key]);
 			div_element.appendChild(user_info_content);
 		}
 	}
-	document.getElementById('user_info').appendChild(account_info_form);
+	
+	//Append the created account_info div to the document's user_info div
+	document.getElementById('user_info').appendChild(account_info_div);
+	return false;
+}
+
+//Deconstruct Dom objects so that they do not carry over
+function deconstructDOM(parent, display_change) {
+	if(parent != null) {
+		var element = document.getElementById(parent);
+		element.parentNode.removeChild(element);
+	}
+	if(display_change !== "" || display_change != null) {
+		changeDisplay(display_change);
+	}
 	return false;
 }
 
 
+function displayNotes(response_object) {
+	alert("success");
+	notes = response_object.notes;
+	
+}
 
 
+/***************************Geolocation Functions****************************/
 
+
+function getLocation() {
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(getPosition);
+	} else {
+		alert("Geolocation not supported");
+	}
+}
+	
+function getPosition(position) {
+	//alert("Latitude: "+position.coords.latitude+"\nLongitude: "+position.coords.longitude);
+	latitude = position.coords.latitude;
+	longitude = position.coords.longitude;
+}
 
 
 /***************************API Request Functions****************************/
