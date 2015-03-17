@@ -73,10 +73,12 @@ function apiUpdateUserInfo(&$encoded_request) {
 
 
 	// Validate user provided credentials
-	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password) 
-		// Confirm credentials provided match the session key owner
-		|| $requester_info['id'] != $user_info['id'])
-	{
+	$user_info = dbAuthenticateUser($request->current_email, 
+						$request->current_password);
+	// Confirm credentials provided match the session key owner
+	if (!$user_info || $requester_info['id'] != $user_info['id']) {
+		// Either credentials were bad, or user entered another user's 
+		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
@@ -116,11 +118,10 @@ function apiGetUserInfo(&$encoded_request) {
 	// TODO(sdsmith): verify input
 
 	// Validate user provided credentials to get user info
-	if (!$user_info = dbAuthenticateUser($request->email, 
-						$request->password)
-		// Confirm credentials provided match the session key owner
-		|| $requester_info['id'] != $user_info['id'])
-	{
+	$user_info = dbAuthenticateUser($request->email, $request->password);
+
+	// Confirm credentials provided match the session key owner
+	if (!$user_info || $requester_info['id'] != $user_info['id']) {
 		// Either credentials were bad, or user entered another user's 
 		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
