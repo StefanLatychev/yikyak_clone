@@ -1,9 +1,9 @@
 //Display Controller
 
-var username;
-var latitude;
-var longitude;
-var notePull;
+var USERNAME;
+var LATITUDE;
+var LONGITUDE;
+var NOTEPULL;
 
 /*******************************Constructors******************************/
 
@@ -42,14 +42,26 @@ function packageGetNotesAPIRequest(latitude, longitude, timestamp, direction, ma
 		direction : direction
 	}
 	
-	var notes = {
-		max_notes : maxNotes
+	var request_payload = {
+		location,
+		time, 
+		max_notes :  maxNotes
+	}
+	return request_payload;
+}
+
+
+
+//Constructor for sending notes api request object
+function packageSendNotesAPIRequest(latitude, longitude, msg){
+	var location = {
+		latitude : latitude,
+		longitude : longitude
 	}
 	
 	var request_payload = {
 		location,
-		time, 
-		notes
+		message : msg
 	}
 	return request_payload;
 }
@@ -69,6 +81,7 @@ function initialize() {
 	$('body > :not(#login)').hide();
 	$('.error').hide();
 	$('#login').appendTo('body');
+	//TODO(SLatychev): Prevent first note fetch to avoid worldwide fetch
 }
 
 
@@ -96,12 +109,12 @@ function changeDisplay(page_to_display) {
 	//the map from displaying incorrectly when we change from and back to it.
 	if(page_to_display === "main") {
 		initializeMap();
-		notePull = setInterval(
+		NOTEPULL = setInterval(
 			function notes() {
 				noteRequest(); 
 			}, 5000);
 	} else {
-		clearInterval(notePull);
+		clearInterval(NOTEPULL);
 	}
 	$('#'+page_to_display).appendTo('body');
 	return false;
@@ -145,7 +158,7 @@ function loginValidation() {
 	if(!validated){
 		return false;
 	}
-	username = email;
+	USERNAME = email;
 	//Package and send request
 	var payloadString = JSON.stringify(packageBasicAPIRequest(email, password));
 	sendAPIRequest("api/authentication.php", "POST", payloadString, loginValidated);
@@ -219,6 +232,7 @@ function registerValidation(){
 
 
 //Prompt for reauthentication
+//TODO(SLatychev): Add more rigorous validation checking
 function authValidation() {	
 	//Hide all error labels
 	$('.error').hide();
@@ -233,7 +247,7 @@ function authValidation() {
 		$("input#authenticate_email").focus();
 		validated = false;
 	}
-	if(email != username){
+	if(email != USERNAME){
 		$("label#authenticate_error").show();
 		return false;
 	}
@@ -257,11 +271,51 @@ function authValidation() {
 
 //Request server to get notes
 function noteRequest() {
-	var time = Date.now() / 1000 | 0;
+	//create new date object
+	var now = new Date();
+	
+	//Get the current date
+	var date = [now.getFullYear(), now.getMonth() + 1, now.getDate()];
+	
+	//Get the current time
+	var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+	
+	//Will put time in double digits
+	for(var i = 0; i < 3; i++) {
+		if(time[i] < 10) {
+			time[i] = "0"+time[i];
+		}
+	}
+	
+	for(var j = 1; j < 3; j++) {
+		if(date[j] < 10) {
+			date[j] = "0"+date[j];
+		}
+	}
+	
+	var current_timestamp = date.join("-")+ " " + time.join(":");
+	//alert(current_timestamp+"\n"+LATITUDE +"\n"+LONGITUDE);
+	
 	var direction = "before";
 	
-	var payloadString = JSON.stringify(packageGetNotesAPIRequest(latitude, longitude, time, direction, ""));
+	var payloadString = JSON.stringify(packageGetNotesAPIRequest(LATITUDE, LONGITUDE, current_timestamp, direction, ""));
 	sendAPIRequest("api/notes.php", "GET", payloadString, displayNotes);
+	return false;
+}
+
+
+
+function sendMessage() {
+	var msg = $("input#message").val();
+	
+	if(msg == ""){
+		return false;
+	}
+	
+	//alert(LATITUDE+"\n"+LONGITUDE+"\n"+msg);
+	
+	var payloadString = JSON.stringify(packageSendNotesAPIRequest(LATITUDE, LONGITUDE, msg));
+	sendAPIRequest("api/notes.php", "POST", payloadString, noteRequest);
 	return false;
 }
 
@@ -272,8 +326,6 @@ function logoutRequest() {
 	sendAPIRequest("api/authentication.php", "DELETE", payloadString, logout);
 	return false;
 }
-
-
 
 
 
@@ -321,8 +373,9 @@ function userInfo(response_object) {
 	account_info_div.id = "account_info";
 	
 	//Add field set to main div
-	var account_info_form = document.createElement("fieldset");
-	account_info_div.appendChild(account_info_form);
+	var account_info_fieldset = document.createElement("fieldset");
+	account_info_fieldset.id = "account_info_fieldset";
+	account_info_div.appendChild(account_info_fieldset);
 	
 	//Get the user info object
 	var user_info = response_object.user_info;
@@ -333,7 +386,7 @@ function userInfo(response_object) {
 			//Create a div for the the key value pair
 			var div_element = document.createElement("div");
 			div_element.id = "info_element";
-			account_info_form.appendChild(div_element);
+			account_info_fieldset.appendChild(div_element);
 			
 			//Load key value data into div
 			var user_info_content = document.createTextNode(key+": "+user_info[key]);
@@ -345,6 +398,7 @@ function userInfo(response_object) {
 	document.getElementById('user_info').appendChild(account_info_div);
 	return false;
 }
+
 
 //Deconstruct Dom objects so that they do not carry over
 function deconstructDOM(parent, display_change) {
@@ -359,10 +413,107 @@ function deconstructDOM(parent, display_change) {
 }
 
 
+//Construct notes from response_object note list
 function displayNotes(response_object) {
-	alert("success");
-	notes = response_object.notes;
-	
+	//alert("success");
+	var notes = response_object.notes;
+	for(var note in notes) {
+		//Indented to reflect html indentation
+		if(document.getElementById('note_'+notes[note].id)) {
+			//alert(notes[note].id);
+			continue;
+		}
+		
+		//Note div
+		var note_div = document.createElement("div");
+		note_div.className = "note"; 
+		note_div.id = "note_" + notes[note].id;
+		
+		var note_fieldset = document.createElement("fieldset");
+		note_fieldset.id = "note_fieldset";
+		note_div.appendChild(note_fieldset);
+			
+			//Note message div
+			var note_message_div = document.createElement("div");
+			note_message_div.id = "note_message";
+			note_message_div.className = "note_message";
+				
+				//Note message span
+				var note_message_span = document.createElement("span");
+				note_message_span.className = "note_message";
+				note_message_span.id = "note_message";
+				note_message_span.innerHTML = notes[note].message;
+				note_message_div.appendChild(note_message_span);
+			
+			note_fieldset.appendChild(note_message_div);
+			
+			//Vote wrapper div
+			var vote_wrapper_div = document.createElement("div");
+			vote_wrapper_div.className = "wrapper_vote";
+			vote_wrapper_div.id = "wrapper_vote";
+				
+				//Vote options wrapper div
+				var vote_wrapper_options_div = document.createElement("div");
+				vote_wrapper_options_div.className = "wrapper_vote_options";
+				vote_wrapper_options_div.id = "wrapper_vote_options";
+					
+					//Upvote button
+					var upvote_button = document.createElement("button");
+					upvote_button.className = "upvote";
+					upvote_button.id = "upvote_btn";
+					upvote_button.value = "Upvote";
+					upvote_button.innerHTML = "Upvote";
+					vote_wrapper_options_div.appendChild(upvote_button);
+					
+					//Downvote button
+					var downvote_button = document.createElement("button");
+					downvote_button.className = "downvote";
+					downvote_button.id = "downvote_btn";
+					downvote_button.value = "Downvote";
+					downvote_button.innerHTML = "Downvote";
+					vote_wrapper_options_div.appendChild(downvote_button);
+					
+				vote_wrapper_div.appendChild(vote_wrapper_options_div);
+			
+			note_fieldset.appendChild(vote_wrapper_div);
+			
+			//Note metadata div
+			var note_metadata_wrapper_div = document.createElement("div");
+			note_metadata_wrapper_div.className = "wrapper_note_metadata";
+			note_metadata_wrapper_div.id = "wrapper_note_metadata";
+			
+				//Note post time wrapper div
+				var note_posttime_wrapper_div = document.createElement("div");
+				note_posttime_wrapper_div.className = "wrapper_note_posttime";
+				note_posttime_wrapper_div.id = "wrapper_note_posttime";
+					
+					//Note post time wrapper span
+					var note_posttime_wrapper_span = document.createElement("span");
+					note_posttime_wrapper_span.className = "note_posttime";
+					note_posttime_wrapper_span.id = "note_posttime";
+					note_posttime_wrapper_span.innerHTML = notes[note].time;
+					note_posttime_wrapper_div.appendChild(note_posttime_wrapper_span);
+				
+				note_metadata_wrapper_div.appendChild(note_posttime_wrapper_div);
+				
+				//Note vote count wrapper div
+				var note_votecount_wrapper_div = document.createElement("div");
+				note_votecount_wrapper_div.className = "wrapper_note_votecount";
+				note_votecount_wrapper_div.id = "wrapper_note_votecount";
+					
+					//Note vote count wrapper span
+					var note_votecount_wrapper_span = document.createElement("span");
+					note_votecount_wrapper_span.className = "note_votecount";
+					note_votecount_wrapper_span.id = "note_votecount";
+					note_votecount_wrapper_span.innerHTML = notes[note].votes;
+					note_votecount_wrapper_div.appendChild(note_votecount_wrapper_span);
+				
+				note_metadata_wrapper_div.appendChild(note_votecount_wrapper_div);
+			
+			note_fieldset.appendChild(note_metadata_wrapper_div);
+			
+		document.getElementById('timeline').appendChild(note_div);
+	}	
 }
 
 
@@ -379,8 +530,8 @@ function getLocation() {
 	
 function getPosition(position) {
 	//alert("Latitude: "+position.coords.latitude+"\nLongitude: "+position.coords.longitude);
-	latitude = position.coords.latitude;
-	longitude = position.coords.longitude;
+	LATITUDE = position.coords.latitude;
+	LONGITUDE = position.coords.longitude;
 }
 
 
