@@ -10,8 +10,6 @@ define("LEN_MIN_PHONE_NUMBER", 7);
 define("LEN_MAX_PHONE_NUMBER", 15);
 define("WHITELIST_REGEX_PHONE_NUMBER", "/[\d]+/");
 
-define("WHITELIST_REGEX_NOTE", "/[\w\d\s~!@#$%^&*()-=+]+/");
-
 define("WHITELIST_REGEX_LOCATION", "/^-?[\.\d]+/");
 
 define("WHITELIST_REGEX_UTC_TIMESTAMP", "/\d\d-\d\d-\d\d \d\d:\d\d:\d\d/");
