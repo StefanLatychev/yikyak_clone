@@ -6,8 +6,6 @@ require_once("../models/database/authentication.php");
 // TODO(sdsmith): Set active session key expire time so that it can be removed 
 // from the db after a certain amount of time, invalidating the API key.
 
-// TODO(sdsmith): Have db send error messages to the response['errors'] var
-
 
 
 /*
@@ -33,7 +31,6 @@ function apiLogin($encoded_request) {
 		return $response;
 	}
 
-	// TODO(sdsmith): make sure that the user does not already have an active session key
 	// Verify input
 	// email
 	if (!whitelistString($request->email, WHITELIST_REGEX_EMAIL)) {
