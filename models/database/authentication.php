@@ -17,7 +17,7 @@ function dbInsertSessionKey($session_key, $user_id) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'insert_session_key', array($session_key, $user_id));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
+			$result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 			if ($result_as_array && $result_as_array[2] == 1) {	// NOTE(sdsmith): Check if this is the right value to be checking for success
 				$success = true;
 			}
@@ -72,13 +72,13 @@ function dbActiveSessionKey($session_key) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'check_active_session_key', array($session_key));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
+			$result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 			if ($result_as_array) {
 				// There was a result, so we matched
 				$result = $result_as_array;
 
 				// Sanity check: confirm there was only one session key match
-				if ($result_as_array = pg_fetch_array($resultobj)) {
+				if ($result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC)) {
 					// NOTE(sdsmith): should never happen as the session key is the primary key
 					die("Two session keys with the same name!!");
 				}			
@@ -138,13 +138,13 @@ function dbAuthenticateUser($email, $password) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, "credential_check", array($email, $password));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
+			$result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 			if ($result_as_array) {
 				// There was a result, so we are authenticated.
 				$autheduserdata = $result_as_array;
 
 				// Sanity check: confirm there was only one credential match.
-				if ($result_as_array = pg_fetch_array($resultobj)) {
+				if ($result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC)) {
 					die("Multiple user credential matches");
 				}
 	

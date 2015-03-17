@@ -212,7 +212,7 @@ function dbGetVoteOnNote($note_id, $user_id) {
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'check_vote_existance', array($note_id, $user_id));
 		if ($resultobj) {
-			$result_as_array = pg_fetch_array($resultobj);
+			$result_as_array = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 			if ($result_as_array) {
 				$result = $result_as_array;
 			}

@@ -63,7 +63,7 @@ function dbExistsEmail($email) {
 
 	if (pg_prepare($dbconn, 'exists_email', 'SELECT * FROM appuser WHERE email = $1')) {
 		if ($resultobj = pg_execute($dbconn, 'exists_email', array($email))) {
-			$exists = pg_fetch_array($resultobj);
+			$exists = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 		}
 	} 
 
@@ -82,7 +82,7 @@ function dbExistsPhoneNumber($phoneNumber) {
 
 	if (pg_prepare($dbconn, 'exists_phone_number', 'SELECT * FROM appuser WHERE phone_number = $1')) {
 		if ($resultobj = pg_execute($dbconn, 'exists_phone_number', array($phoneNumber))) {
-			$exists = pg_fetch_array($resultobj);
+			$exists = pg_fetch_array($resultobj, null, PGSQL_ASSOC);
 		}
 	} 
 
