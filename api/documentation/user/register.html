@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get notes - API Documentation</title>
+</head>
+<body>
+<h1>POST /api/user.php Register New User</h1>
+<hr>
+
+<p>Registers a new user account.</p>
+
+<ul>
+<li>Emails must be of correct format with alpha-numeric characters, and up to 50 characters in length.<li>
+<li>Phone number must only contain digits, and between 7 and 15 characters in length.</li>
+<li>Passwords must be between 8 and 100 characters in length and accepts all alpha-numeric values and the symbols <code>~!@#$%^&*()</code>.</li>
+</ul>
+
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre></code>
+{
+	"email1": "",
+	"email2": "",
+	"phone_number": "",
+	"password1": "",
+	"password2": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>email1</td><td>Y</td><td>Email to register account to</td></tr>
+<tr><td>email2</td><td>Y</td><td>Confirmation of email</td></tr>
+<tr><td>phone_number</td><td>N</td><td>Phone number to register account to containing only numbers</td></tr>
+<tr><td>password1</td><td>Y</td><td>Password to register account with</td></tr>
+<tr><td>password2</td><td>Y</td><td>Confirmation of password</td></tr>
+</table>
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre></code>
+{
+	"errors": [],
+	"status": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the account was verified successfully and a cookie was sent.</p>
+
+</body>
+</html>

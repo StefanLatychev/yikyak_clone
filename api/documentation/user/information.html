@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get notes - API Documentation</title>
+</head>
+<body>
+<h1>GET /api/user.php Get User Information</h1>
+<hr>
+
+<p>Return current user information.</p>
+
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"email": "",
+	"password": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>email</td><td>Y</td><td>User's current email</td></tr>
+<tr><td>password</td><td>Y</td><td>User's current password</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": "",
+	"user_info": {
+		"email": "",
+		"phone_number": "",
+		"join_date": "",
+		"validated": "",
+		"last_login": ""
+	}
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+<tr><td>user_info</td><td>Contains all the user's information</td></tr>
+<tr><td>email</td><td>User account email</td></tr>
+<tr><td>phone_number</td><td>User account phone number</td></tr>
+<tr><td>join_date</td><td>User original join date in UTC time</td></tr>
+<tr><td>validated</td><td>True if user account is validated</td></tr>
+<tr><td>last_login</td><td>Last time user logged in (UTC time)</td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the information was sent.</p>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get notes - API Documentation</title>
+</head>
+<body>
+<h1>POST /api/report.php Report a note</h1>
+<hr>
+
+<p>Submits a report for a note that is thought to be inappropriate.</p>
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"note_id": "",
+	"reason": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>note_id</td><td>Y</td><td>Id corresponding to the note the report is being submitted for</td></tr>
+<tr><td>reason</td><td>Y</td><td>Text describing why the note is being reported for inappropriate content</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+</table>
+
+<p>If `status`has a `200` status code, the report was submitted successfully.</p>
+
+</body>
+</html>

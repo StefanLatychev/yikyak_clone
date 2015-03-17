@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get notes - API Documentation</title>
+</head>
+<body>
+<h1>GET /api/notes.php Get Notes</h1>
+<hr>
+
+<p>Get a number of notes from the database, either by location or globally. If time is given, it must be in <code>UTC</code> format.</p>
+
+<h2>URL</h2>
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"location": {
+		"latitude": (float)
+		"longitude": (float)
+	},
+	"time": {
+		"timestamp": "",
+		"direction": ""
+	},
+	"max_notes": (int),
+	
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>location</td><td>N</td><td>If provided, will return notes from the given location (latitude, longitude). If not provided, with get notes worldwide</td></tr>
+<tr><td>latitude</td><td>-</td><td>Geographical latitude (must also provide longitude).</td></tr>
+<tr><td>longitude</td><td>-</td><td>Geographical longitude (must also provide latitude).</td></tr>
+<tr><td>time</td><td>N</td><td>If provided, will get notes from the given timestamp either forwards, or backwards in time (determined by direction).</td></tr>
+<tr><td>timestamp</td><td>-</td><td>Y-m-d H:i:s timestamp in <code>UTC</code></td></tr>
+<tr><td>direction</td><td>-</td><td>Either <code>after</code> or <code>before</code>, coresponding to after or before the given timestamp.</td></tr>
+<tr><td>max_notes</td><td>N</td><td>If provided, will only return max_notes worth of notes. Otherwise will return the default amount.</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": "",
+	"notes": [
+		{
+			"id": "",
+			"time": "",
+			"location_latitude": "",
+			"location_longitude": "",
+			"votes": "",
+			"message": ""
+		}
+	]
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+<tr><td>notes</td><td>Array of notes that fit the request's criteria sorted in ascending time order starting at lowest array index</td></tr>
+<tr><td>id</td><td>internal id of note</td></tr>
+<tr><td>time</td><td><code>UTC</code> time the note was posted</td></tr>
+<tr><td>location_latitude</td><td>latitude where the note was posted</td></tr>
+<tr><td>location_longitude</td><td>longitude where the note was posted</td></tr>
+<tr><td>votes</td><td>votes associated with post</td></tr>
+<tr><td>message</td><td>content of note</td></tr>
+</table>
+
+<p>If <code>status</code> has a <code>200</code> status code, the request succeeded.</p>
+</body>
+</html>

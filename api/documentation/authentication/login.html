@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vote - API Documentation</title>
+</head>
+<body>
+<h1>POST /api/authentication.php Login</h1>
+<hr>
+
+<p>Used to authenticate user and returns an API session key. Sets cookie containing session key on user's machine. Cookie is set to only be sent by browser over https connection.</p>
+
+<p>If the request contains valid credentials and there are existing active API session keys for that user, the active keys will be invalidated.</p>
+
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>N</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"email": "",
+	"password": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>email</td><td>Y</td><td>Username of user to be authenticated.</td></tr>
+<tr><td>password</td><td>Y</td><td>Password of user to be authenticated.</td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": "",
+	"api_session_key": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of request</td></tr>
+<tr><td>api_session_key</td><td>Unique session key used to verify authentication</td></tr>
+</table>
+
+<p>If <code>status</code>has a <code>200</code> status code, the account was verified successfully and a cookie was sent.</p>
+
+<p>If <code>status</code> has a <code>401</code> status code, the provided crendentials were invalid.</p>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vote - API Documentation</title>
+</head>
+<body>
+<h1>DELETE /api/authentication.php Logout</h1>
+<hr>
+
+<p>Used to log user out of an API session by invalidating API session key and cookie.</p>
+
+<h2>URL</h2>
+
+
+<h2>Information</h2>
+
+<table border="1">
+<tr><td>Authentication required?</td><td>Y</td></tr>
+<tr><td>Request format</td><td>json</td></tr>
+<tr><td>Response format</td><td>json</td></tr>
+</table>
+
+
+<h2>Parameters</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Required?</td><td>Description</td></tr>
+<tr><td>None</td><td></td><td></td></tr>
+</table>
+
+
+<h2>Response</h2>
+
+<h3>JSON</h3>
+<pre><code>
+{
+	"errors": [],
+	"status": ""
+}
+</code></pre>
+
+<table border="1">
+<tr><td>Parameter</td><td>Description</td></tr>
+<tr><td>errors</td><td>Array of errors that occured when processing the request</td></tr>
+<tr><td>status</td><td>HTTP status code of reques</td></tr>
+</table>
+
+<p>If status is <code>200</code>, the account was successfully logged out, the session key invalidated, and authentication cookie invalidated.</p>
+
+</body>
+</html>
