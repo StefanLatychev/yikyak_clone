@@ -75,7 +75,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	// Validate user provided credentials
 	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password) 
 		// Confirm credentials provided match the session key owner
-		|| $requester_info['id'] != $user_info['id']))
+		|| $requester_info['id'] != $user_info['id'])
 	{
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
