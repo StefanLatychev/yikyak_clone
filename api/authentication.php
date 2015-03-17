@@ -10,7 +10,6 @@ require_once("../models/database/authentication.php");
 
 
 
-// VERIFIED
 /*
  * Return response with session key on successful credential validation 
  * representing the authenticated user.
@@ -28,26 +27,21 @@ function apiLogin($encoded_request) {
 	}
 
 	// Check if username and password provided
-	if (!isset($request->email) || !isset($request->password)) {
+	if (!property_exists($request, "email") || !property_exists($request, "password")) {
 		$response['errors'][] = 'Full credentials not provided';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
 	}
-/*
+
 	// TODO(sdsmith): make sure that the user does not already have an active session key
 	// Verify input
 	// email
-	if (!property_exists($request, "email") 
-		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL)) {
-		
+	if (!whitelistString($request->email, WHITELIST_REGEX_EMAIL)) {
 		$valid_input = false;
 		$response['errors'][] = 'Parameter email is invalid';
 	}
 	// password
-	if (!property_exists($request, "password")
-		|| !whitelistString($request->password, 
-					WHITELIST_REGEX_PASSWORD)) {
-		
+	if (!whitelistString($request->password, WHITELIST_REGEX_PASSWORD)) {
 		$valid_input = false;
 		$response['errors'][] = 'Parameter password is invalid';
 	}
@@ -57,9 +51,21 @@ function apiLogin($encoded_request) {
 		$response['status'] = STATUS_BAD_REQUEST;
 		return $response;
 	}
-*/
+
 	// Authenticate user
 	if ($user_info = dbAuthenticateUser($request->email, $request->password)) {
+		// Check if there are existing active session keys
+		if ($active_keys = dbGetUserActiveSessionKeys($user_info['id'])) {
+			// Exists active key(s); remove them
+			for ($i = 0; $i < sizeof($active_keys); $i += 1) {
+				if(!dbRemoveSessionKey($active_keys[$i]['session_key'])) {
+					$response['errors'][] = 'Failed to complete request';
+					$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
+					return $response;
+				}
+			}
+		}
+
 		// Generate session key
 		$session_key = generateSessionKey();
 
@@ -89,7 +95,6 @@ function apiLogin($encoded_request) {
 
 
 
-// VERIFIED
 /* 
  * Logs user out of API by invalidating their session key. Return response
  * object.
