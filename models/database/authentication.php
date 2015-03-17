@@ -103,7 +103,7 @@ function dbGetUserActiveSessionKeys($user_id) {
 	$dbconn = dbConnect();
 	$result = null;
 	
-	$prepare_ret = pg_prepare($dbconn, 'get_active_user_id_session_keys', 'SELECT * FROM active_session_keys WHERE user_id = $1');
+	$prepare_ret = pg_prepare($dbconn, 'get_active_user_id_session_keys', 'SELECT * FROM active_api_session_keys WHERE user_id = $1');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, 'get_active_user_id_session_keys', array($user_id));
 		if ($resultobj) {
