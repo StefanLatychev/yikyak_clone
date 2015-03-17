@@ -1,7 +1,7 @@
 <?php
 require_once('definitions.php');
 require_once('../models/database/user.php');
-
+require_once('verification.php');
 
 
 
@@ -10,6 +10,7 @@ require_once('../models/database/user.php');
  */
 function apiRegisterNewUser(&$encoded_request) {
 	$response = getAPIResponseTemplate();
+	$valid_input = true;
 
 	// Decode request
 	// NOTE(sdsmith): makes assumption it's a json request
@@ -18,8 +19,84 @@ function apiRegisterNewUser(&$encoded_request) {
 	}
 	
 	// TODO(sdsmith): input validation
-	//dbExistsEmail
-	//dbExistsPhoneNumber
+	// Verifiy input
+	// Check email is present
+	if (!property_exists($request, 'email1') 
+				|| !property_exists($request, 'email2')) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Email and confirmation email not present';
+	}
+
+	// Check password is present
+	if (!property_exists($request, 'password1') 
+				|| !property_exists($request, 'password2')) 
+	{
+		$valid_input = false;
+		$response['errors'[] = 'Password and confirmation password not present';
+	}
+
+	// Confirm required information is present
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
+
+	// email1
+	if (!whitelistString($request->email1, WHITELIST_REGEX_EMAIL)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid email1 parameter';
+	}
+
+	// email2
+	if (!whitelistString($request->email2, WHITELIST_REGEX_EMAIL)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid email2 parameter';
+	}
+
+	// phone_number
+	if (!property_exists($request, 'phone_number') 
+		|| !whitelistString($request->phone_number, 
+					WHITELIST_REGEX_EMAIL)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid phone_number parameter';
+	}
+
+	// password1
+	if (!whitelistString($request->password1, WHITELIST_REGEX_EMAIL)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid password1 parameter';
+	}
+
+	// password2
+	if (!whitelistString($request->password2, WHITELIST_REGEX_EMAIL)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid password2 parameter';
+	}
+
+	// Confirm valid input
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
+
+	// Confirm there will be no duplicate email or phone number in database
+	if (dbExistsEmail($request->email1)) {
+		$valid_input = false;
+		$response['errors'][] = 'Email already registered';
+	}
+	if (property_exists($request, 'phone_number') 
+			&& dbExistsPhoneNumber($request->phone_number)) {
+		$valid_input = false;
+		$response['errors'][] = 'Phone number already registered';
+	}
+
+	// Confirm no duplicate entries in database
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
 
 	// Confirm email/password information matches
 	if (!($request->email1 == $request->email2 && 

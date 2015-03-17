@@ -3,6 +3,7 @@
  * Notes API.
  */
 require_once('definitions.php');
+require_once('verification.php');
 require_once('../models/database/notes.php');
 define('DEFAULT_NUM_NOTES', 10);
 
