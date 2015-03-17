@@ -27,7 +27,7 @@ function apiGetNotes(&$request, &$response) {
 
 	// Validate input
 	// Check if time present
-	if (parameterExists($request, 'time')) {
+	if (property_exists($request, 'time')) {
 		if (parameterExists($request->time, "timestamp")
 			&& whitelistString($request->time->timestamp, 
 					WHITELIST_REGEX_UTC_TIMESTAMP)) 
@@ -141,7 +141,7 @@ function apiSubmitNote(&$request, &$response) {
 
 	// TODO(sdsmith): input validation
 	// Check location
-	if (parameterExists($request, 'location')) {
+	if (property_exists($request, 'location')) {
 		// latitude
 		if (!parameterExists($request->location, 'latitude') 
 			|| !is_float($request->location->latitude))
