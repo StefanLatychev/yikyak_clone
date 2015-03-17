@@ -17,6 +17,7 @@ function apiGetNotes(&$request, &$response) {
 	$timestamp = null;
 	$notes = null;
 	$valid_input = true;
+	$get_fwd_in_time = null;
 
 	// Make sure user is authenticated	
 	if (!isAuthenticated($response)) {
