@@ -267,19 +267,24 @@ function logout() {
 //User has authenticated, send to account page and construct user info profile
 function userInfo(response_object) {
 	changeDisplay('account');
-	var account_info_form = document.createElement("fieldset");
-	var user_info_table = document.createElement("table");
-	account_info_form.appendChild(user_info_table);
-	var user_info = response_object.user_info;
 	
+	if(document.getElementById('account_info')) {
+		return false;
+	}
+	
+	var account_info_form = document.createElement("fieldset");
+	var user_info_div = document.createElement("div");
+	user_info_div.id = "account_info";
+	account_info_form.appendChild(user_info_div);
+	
+	var user_info = response_object.user_info;
 	for(var key in user_info){
-		var table_row = document.createElement("tr");
-		user_info_table.appendChild(table_row);
 		if(user_info.hasOwnProperty(key)){
-			var table_element = document.createElement("td");
-			table_row.appendChild(table_element);
+			var div_element = document.createElement("div");
+			div_element.id = "info_element";
+			user_info_div.appendChild(div_element);
 			var user_info_content = document.createTextNode(key+": "+user_info[key]);
-			table_element.appendChild(user_info_content);
+			div_element.appendChild(user_info_content);
 		}
 	}
 	document.getElementById('user_info').appendChild(account_info_form);
