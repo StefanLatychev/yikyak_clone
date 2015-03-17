@@ -99,7 +99,7 @@ function dbActiveSessionKey($session_key) {
 /*
  * Return array of active session keys associated with the given user id.
  */
-function dbGetActiveUserSessionKeys($user_id) {
+function dbGetUserActiveSessionKeys($user_id) {
 	$dbconn = dbConnect();
 	$result = null;
 	
