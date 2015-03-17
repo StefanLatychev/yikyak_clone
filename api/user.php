@@ -103,6 +103,7 @@ function apiUpdateUserInfo(&$encoded_request) {
  */
 function apiGetUserInfo(&$encoded_request) {
 	$response = getAPIResponseTemplate();
+	$valid_input = true;
 
 	// Make sure user is authenticated
 	if (!$requester_info = isAuthenticated($response)) {
@@ -116,6 +117,29 @@ function apiGetUserInfo(&$encoded_request) {
 	}	
 
 	// TODO(sdsmith): verify input
+	// Verify input
+	// Email	
+	if (!property_exists($request, 'email') 
+		|| !whitelistString($request->email, WHITELIST_REGEX_EMAIL)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid email parameter';
+	}
+
+	// Password
+	if (!property_exists($request, 'email') 
+		|| !whitelistString($request->email, 
+					WHITELIST_REGEX_PASSWORD)) 
+	{
+		$valid_input = false;
+		$response['errors'][] = 'Invalid password parameter';
+	}
+
+	// Confirm input is valid
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+		return $response;
+	}
 
 	// Validate user provided credentials to get user info
 	$user_info = dbAuthenticateUser($request->email, $request->password);
