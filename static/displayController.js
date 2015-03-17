@@ -54,8 +54,41 @@ function packageGetNotesAPIRequest(latitude, longitude, timestamp, direction, ma
 	return request_payload;
 }
 
-//Add more constructors as needed
 
+
+/*
+ * Return note vote API request object with the given attributes.
+ * @param note_id	id of the note to apply the vote to
+ * @param upvote	't' if the vote is up, 'f' if the vote is down
+ */
+function packageNoteVoteAPIRequest(note_id, upvote) {
+	var request_payload = {
+		note_id: note_id,
+		upvote: upvote
+	}
+
+	return request_payload;
+}
+
+
+
+/*
+ * Return note report API request object with the given attributes.
+ * @param note_id	id of the note to apply the vote to
+ * @param reason	reason for reporting note
+ */
+function packageNoteReportAPIRequest(note_id, reason) {
+	var request_payload = {
+		note_id: note_id,
+		reason: reason
+	}
+
+	return request_payload;
+}
+
+
+
+//Add more constructors as needed
 
 
 
@@ -274,10 +307,31 @@ function logoutRequest() {
 }
 
 
+/*
+ * Send note vote to server and update the note on screen.
+ * @param upvote	't' if upvote, 'f' is downvote
+ */
+function noteVoteRequest(note_id, upvote) {
+	var payloadString = JSON.stringify(packageNoteVoteAPIRequest(note_id, upvote);
+	sendAPIRequest("api/notes.php", "PUT", payloadString, 
+			function(request_object) {
+				// TODO():
+				// get note of given id
+				// update its appears to 'applied vote' appearance		
+			}	
+}
 
 
-
-
+/*
+ * Send report for a given note.
+ */
+function noteReportRequest(note_is, reason) {
+	var payloadString = JSON.stringify(packageNoteReportAPIRequest(note_id, reason);
+	sendAPIRequest("api/report.php", "POST", payloadString, 
+			function(request_object) {
+				alert("Report has been sent. Thank you for keeping our timelines safe!");	
+			}	
+}
 
 
 
