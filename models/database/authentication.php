@@ -134,7 +134,7 @@ function dbAuthenticateUser($email, $password) {
 	$dbconn = dbConnect();
 	$result = null;
 	
-	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT id, email, phone_number, join_date, validated, last_login FROM appuser, appuser_passwords WHERE appuser.email = $1 and appuser_passwords.password = $2');
+	$prepare_ret = pg_prepare($dbconn, "credential_check", 'SELECT id, email, phone_number, join_date, validated, last_login FROM appuser, appuser_passwords WHERE appuser.email = $1 and appuser.id = appuser_passwords.user_id and appuser_passwords.password = $2');
 	if ($prepare_ret) {
 		$resultobj = pg_execute($dbconn, "credential_check", array($email, $password));
 		if ($resultobj) {
