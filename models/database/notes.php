@@ -39,11 +39,9 @@ function dbGetLocalNotes(	$maxnotes,
 	$result = null;
 
 	$sql_query = 'SELECT * FROM (SELECT id, time, location_latitude, location_longitude, votes, message FROM notes ORDER BY time ' . $sort_direction . ') AS ordered_notes WHERE (ordered_notes.location_latitude BETWEEN $1::real - $3::real AND $1::real + $3::real) AND (ordered_notes.location_longitude BETWEEN $2::real - $3::real AND $2::real + $3::real) AND ordered_notes.time ' . $comparator . ' $4 ORDER BY ordered_notes.time ASC LIMIT $5';
-	var_dump($sql_query);
 
 	$prepare_ret = pg_prepare($dbconn, 'get_local_notes_' . $comparator . $sort_direction, $sql_query);
 	if ($prepare_ret) {
-		var_dump(array($latitude, $longitude, GEO_LOCAL_RADIUS, $timestamp, $maxnotes));
 		$resultobj = pg_execute($dbconn, 'get_local_notes_' . $comparator . $sort_direction, array($latitude, $longitude, GEO_LOCAL_RADIUS, $timestamp, $maxnotes));
 		if ($resultobj) {
 			$result = pg_fetch_all($resultobj);
