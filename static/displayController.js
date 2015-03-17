@@ -331,7 +331,6 @@ function noteRequest() {
 	}
 	
 	var current_timestamp = date.join("-")+ " " + time.join(":");
-	//alert(current_timestamp+"\n"+LATITUDE +"\n"+LONGITUDE);
 	
 	var direction = "before";
 	
@@ -348,8 +347,6 @@ function sendMessage() {
 	if(msg == ""){
 		return false;
 	}
-	
-	//alert(LATITUDE+"\n"+LONGITUDE+"\n"+msg);
 	
 	var payloadString = JSON.stringify(packageSendNotesAPIRequest(LATITUDE, LONGITUDE, msg));
 	sendAPIRequest("api/notes.php", "POST", payloadString, noteRequest);
@@ -373,18 +370,19 @@ function logoutRequest() {
 function noteVoteRequest(note_id, upvote) {
 	var payloadString = JSON.stringify(packageNoteVoteAPIRequest(note_id, upvote));
 	sendAPIRequest("api/notes.php", "PUT", payloadString, 
-			function(request_object) {
-				// TODO():
-				// get note of given id 
-				//alert(note_id);
-				var note = document.getElementById("note_"+note_id.toString());
-				// update its appears to 'applied vote' appearance
+		function(request_object) {
+			// TODO():
+			// get note of given id 
+			var note = document.getElementById("note_"+note_id.toString());
+			// update its appears to 'applied vote' appearance
+			if(note) {
 				if(upvote == "t") {
 					note.votes ++;  		
 				} else if(upvote == "f") {
 					note.votes --;
 				}
-			});
+			}
+		});
 	return false;
 }
 
@@ -485,12 +483,12 @@ function deconstructDOM(parent, display_change) {
 
 //Construct notes from response_object note list
 function displayNotes(response_object) {
-	//alert("success");
 	var notes = response_object.notes;
 	for(var note in notes) {
 		//Indented to reflect html indentation
+		
+		//If note exists then do not duplicate it
 		if(document.getElementById('note_'+notes[note].id)) {
-			//alert(notes[note].id);
 			continue;
 		}
 		
@@ -587,6 +585,16 @@ function displayNotes(response_object) {
 			note_div.appendChild(note_metadata_wrapper_div);
 			
 		document.getElementById('timeline').appendChild(note_div);
+		
+		$('#note_'+notes[note].id).on('mouseup', '.upvote', function(event) {
+
+			noteVoteRequest(event.target.id.toString().split("_")[2], 't');
+		});
+	
+		$('#note_'+notes[note].id).on('mouseup', '.downvote', function(event) {
+			noteVoteRequest(event.target.id.toString().split("_")[2], 'f');
+		});	
+		
 	}
 	return false;
 }
@@ -605,7 +613,6 @@ function getLocation() {
 }
 	
 function getPosition(position) {
-	//alert("Latitude: "+position.coords.latitude+"\nLongitude: "+position.coords.longitude);
 	LATITUDE = position.coords.latitude;
 	LONGITUDE = position.coords.longitude;
 	
@@ -625,7 +632,6 @@ function sendAPIRequest(
 	http_request_method, 
 	encoded_request_payload, 
 	callback_func) {
-		//alert("Stepping into API Request");
 		var request = $.ajax({
 			url: api_request_url,
 			method: http_request_method,
@@ -634,21 +640,12 @@ function sendAPIRequest(
 				// decode result (it is in json format)
 				result_object = JSON.parse(result);
 				
-				/*
-				alert("Parsed JSON object");
-				alert(result_object.status);
-				alert(STATUS_OK);
-				alert(Number(result_object.status) === STATUS_OK);
-				//*/
-				
 				switch(Number(result_object.status)){
 					case STATUS_OK:
 						//Callback function goes here
 						callback_func(result_object);
-						//alert("Good Request");
 						break;
 					case STATUS_BAD_REQUEST:
-						//alert("Bad Request");
 						break;
 					case STATUS_UNAUTHORIZED:
 						changeDisplay('error');
