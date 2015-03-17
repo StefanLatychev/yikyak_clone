@@ -28,7 +28,7 @@ function apiGetNotes(&$request, &$response) {
 	// Validate input
 	// Check if time present
 	if (parameterExists($request, 'time')) {
-		if (parameterExists($request->time, "timestamp") 
+		if (parameterExists($request->time, "timestamp")) {
 			&& whitelistString($request->time->timestamp, 
 					WHITELIST_REGEX_UTC_TIMESTAMP)) 
 		{

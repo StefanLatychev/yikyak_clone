@@ -12,7 +12,7 @@ define("WHITELIST_REGEX_PHONE_NUMBER", "/[\d]+/");
 
 define("WHITELIST_REGEX_LOCATION", "/^-?[\.\d]+/");
 
-define("WHITELIST_REGEX_UTC_TIMESTAMP", "/\d\d-\d\d-\d\d \d\d:\d\d:\d\d/");
+define("WHITELIST_REGEX_UTC_TIMESTAMP", "/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d/");
 
 define("WHITELIST_NUMERIC", "/[\d]+/");
 define("WHITELIST_ALPHABETIC", "/[\w]+/");
