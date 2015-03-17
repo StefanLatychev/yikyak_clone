@@ -144,17 +144,15 @@ function apiSubmitNote(&$request, &$response) {
 	if (parameterExists($request, 'location')) {
 		// latitude
 		if (!parameterExists($request->location, 'latitude') 
-			|| !whitelistString($request->location->latitude, 
-						WHITELIST_REGEX_LOCATION))
+			|| !is_float($request->location->latitude))
 		{
 			$valid_input = false;
 			$response['errors'][] = 'Invalid latitude parameter';
 		}
 
 		// longitude
-		if (!parameterExists($request->location, 'latitude') 
-			|| !whitelistString($request->location->latitude, 
-						WHITELIST_REGEX_LOCATION))
+		if (!parameterExists($request->location, 'longitude') 
+			|| !is_float($request->location->longitude))
 		{
 			$valid_input = false;
 			$response['errors'][] = 'Invalid longitude parameter';
