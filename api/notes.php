@@ -26,8 +26,8 @@ function apiGetNotes(&$request, &$response) {
 
 	// Validate input
 	// Check if time present
-	if (property_exists($request, 'time')) {
-		if (property_exists($request->time, "timestamp") 
+	if (parameterExists($request, 'time')) {
+		if (parameterExists($request->time, "timestamp") 
 			&& whitelistString($request->time->timestamp, 
 					WHITELIST_REGEX_UTC_TIMESTAMP)) 
 		{
@@ -39,7 +39,7 @@ function apiGetNotes(&$request, &$response) {
 		}
 
 		// Adjust search direction
-		if (property_exists($request->time, "direction")) {
+		if (parameterExists($request->time, "direction")) {
 			switch ($request->time->direction) {
 				case 'after':
 					$get_fwd_in_time = true;
@@ -63,7 +63,7 @@ function apiGetNotes(&$request, &$response) {
 	}
 
 	// Check if max_notes present
-	if (property_exists($request, 'max_notes')) {
+	if (parameterExists($request, 'max_notes')) {
 		if (whitelistString($request->max_notes, WHITELIST_NUMBERIC)) {
 			$max_notes = $request->max_notes;
 		} else {
@@ -74,8 +74,8 @@ function apiGetNotes(&$request, &$response) {
 	}
 
 	// Check if location present
-	if (property_exists($request, 'location')) {
-		if (!property_exists($request->location, 'latitude') 
+	if (parameterExists($request, 'location')) {
+		if (!parameterExists($request->location, 'latitude') 
 			|| !whitelistString($request->location->latitude, 
 						WHITELIST_REGEX_LOCATION)) 
 		{
@@ -83,7 +83,7 @@ function apiGetNotes(&$request, &$response) {
 			$response['errors'][] = 'Invalid latitude parameter';
 		}
 
-		if (!property_exists($request->location, 'longitude') 
+		if (!parameterExists($request->location, 'longitude') 
 			|| !whitelistString($request->location->longitude, 
 						WHITELIST_REGEX_LOCATION)) 
 		{
@@ -100,7 +100,7 @@ function apiGetNotes(&$request, &$response) {
 	
 
 	// Perform query for notes
-	if (property_exists($request, 'location')) {
+	if (parameterExists($request, 'location')) {
 		$notes = dbGetLocalNotes($max_notes, 
 					$request->location->latitude, 
 					$request->location->longitude, 
@@ -142,9 +142,9 @@ function apiSubmitNote(&$request, &$response) {
 
 	// TODO(sdsmith): input validation
 	// Check location
-	if (property_exists($request, 'location')) {
+	if (parameterExists($request, 'location')) {
 		// latitude
-		if (!property_exists($request->location, 'latitude') 
+		if (!parameterExists($request->location, 'latitude') 
 			|| !whitelistString($request->location->latitude, 
 						WHITELIST_REGEX_LOCATION))
 		{
@@ -153,7 +153,7 @@ function apiSubmitNote(&$request, &$response) {
 		}
 
 		// longitude
-		if (!property_exists($request->location, 'latitude') 
+		if (!parameterExists($request->location, 'latitude') 
 			|| !whitelistString($request->location->latitude, 
 						WHITELIST_REGEX_LOCATION))
 		{

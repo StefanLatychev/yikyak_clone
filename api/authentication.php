@@ -25,7 +25,7 @@ function apiLogin($encoded_request) {
 	}
 
 	// Check if username and password provided
-	if (!property_exists($request, "email") || !property_exists($request, "password")) {
+	if (!parameterExists($request, "email") || !parameterExists($request, "password")) {
 		$response['errors'][] = 'Full credentials not provided';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
