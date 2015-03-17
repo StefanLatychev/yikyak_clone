@@ -375,7 +375,7 @@ function noteVoteRequest(note_id, upvote) {
 				// TODO():
 				// get note of given id
 				// update its appears to 'applied vote' appearance		
-			}	
+			});	
 }
 
 
@@ -383,11 +383,11 @@ function noteVoteRequest(note_id, upvote) {
  * Send report for a given note.
  */
 function noteReportRequest(note_is, reason) {
-	var payloadString = JSON.stringify(packageNoteReportAPIRequest(note_id, reason);
+	var payloadString = JSON.stringify(packageNoteReportAPIRequest(note_id, reason));
 	sendAPIRequest("api/report.php", "POST", payloadString, 
 			function(request_object) {
 				alert("Report has been sent. Thank you for keeping our timelines safe!");	
-			}	
+			});	
 }
 
 
