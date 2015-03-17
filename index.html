@@ -130,7 +130,6 @@
 			<form id="main_form" method="post">
 				<h1>Main Page Under Construction</h1>
 				<fieldset>
-					
 					<!--Map-->	
 					<div class="map" id="main_map_div">
 						<div id="map"><label id="map_label">Map</label></div>
@@ -160,9 +159,11 @@
 					<!--Timeline-->
 					<div class="timeline" id="main_timeline_div">
 						<label id="channel_label">Timeline</label>
+						
 						<div id="timeline">
 							
 						</div>
+
 					</div>
 					
 					
@@ -225,20 +226,24 @@
 				<h1>Account Page Under Construction</h1>
 				<fieldset>
 					<h1>Account Info</h1>
+					
 					<!--User Information will be loaded in through js-->
 					<div id="user_info">
 							
 					</div>	
 						
+					
 					<!--Update User Info-->
 					<div class="update" id="account_update_btn">
 						<input type="button" name="update" class="button" id="update_btn" value="Update Account Info" onclick="updateAccountInfo();" />
 					</div>
 					
+					
 					<!--Back-->
 					<div class="back" id="account_back_btn" >
-						<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('main');" />
+						<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="deconstructDOM('account_info', 'main');" />
 					</div>
+				
 				</fieldset>
 			</form>
 		</div>
