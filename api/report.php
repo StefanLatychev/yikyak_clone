@@ -84,7 +84,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		// Decode request
 		$REQUEST_VARS = &$_POST;
-		if (!$request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiReportNote($request, $response);
 		}
 		break;

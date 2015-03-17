@@ -163,7 +163,7 @@ function apiSubmitNote(&$request, &$response) {
 	}
 
 	// Check message
-	if (propery_exists($request, 'message')) {
+	if (property_exists($request, 'message')) {
 		// Escape all escapable characters with their html encoding 
 		// equivalent so the text is safe to put directly into an html 
 		// page.
@@ -275,7 +275,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		// Decode request
 		$REQUEST_VARS = &$_POST;
-		if (!$request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
 			apiSubmitNote($request, $response);
 		}
 		break;
