@@ -12,6 +12,7 @@ require_once('verification.php');
 function apiRegisterNewUser(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 	$valid_input = true;
+	$empty_phone_number = false;
 
 	// Decode request
 	// NOTE(sdsmith): makes assumption it's a json request
@@ -55,12 +56,20 @@ function apiRegisterNewUser(&$encoded_request) {
 	}
 
 	// phone_number
-	if (!property_exists($request, 'phone_number') 
-		|| !whitelistString($request->phone_number, 
+	if (!property_exists($request, 'phone_number')) {
+		// Check if phone number is empty
+		$empty_phone_number = $request->phone_number == '';
+		if ($empty_phone_number) {
+			$request->phone_number = null;
+		}
+
+		if (!$empty_phone_number &&
+			!whitelistString($request->phone_number, 
 					WHITELIST_REGEX_PHONE_NUMBER)) 
-	{
-		$valid_input = false;
-		$response['errors'][] = 'Invalid phone_number parameter';
+		{
+			$valid_input = false;
+			$response['errors'][] = 'Invalid phone_number parameter';
+		}
 	}
 
 	// password1
@@ -86,7 +95,7 @@ function apiRegisterNewUser(&$encoded_request) {
 		$valid_input = false;
 		$response['errors'][] = 'Email already registered';
 	}
-	if (property_exists($request, 'phone_number') 
+	if (!$empty_phone_number 
 			&& dbExistsPhoneNumber($request->phone_number)) {
 		$valid_input = false;
 		$response['errors'][] = 'Phone number already registered';
