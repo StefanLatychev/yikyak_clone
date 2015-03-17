@@ -102,7 +102,7 @@ function apiGetUserInfo(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 
 	// Make sure user is authenticated
-	if (!isAuthenticated($response)) {
+	if (!$requester_info = isAuthenticated($response)) {
 		return $response;
 	}
 
@@ -115,7 +115,13 @@ function apiGetUserInfo(&$encoded_request) {
 	// TODO(sdsmith): verify input
 
 	// Validate user provided credentials to get user info
-	if (!$user_info = dbAuthenticateUser($request->email, $request->password)) {
+	if (!$user_info = dbAuthenticateUser($request->email, 
+						$request->password)
+		// Confirm credentials provided match the session key owner
+		|| $requester_info['id'] != $user_info['id'])) 
+	{
+		// Either credentials were bad, or user entered another user's 
+		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
