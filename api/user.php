@@ -33,7 +33,7 @@ function apiRegisterNewUser(&$encoded_request) {
 				|| !property_exists($request, 'password2')) 
 	{
 		$valid_input = false;
-		$response['errors'[] = 'Password and confirmation password not present';
+		$response['errors'][] = 'Password and confirmation password not present';
 	}
 
 	// Confirm required information is present
