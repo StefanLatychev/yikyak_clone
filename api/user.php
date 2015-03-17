@@ -18,7 +18,6 @@ function apiRegisterNewUser(&$encoded_request) {
 		return $response;
 	}
 	
-	// TODO(sdsmith): input validation
 	// Verifiy input
 	// Check email is present
 	if (!property_exists($request, 'email1') 
@@ -193,7 +192,6 @@ function apiGetUserInfo(&$encoded_request) {
 		return $response;
 	}	
 
-	// TODO(sdsmith): verify input
 	// Verify input
 	// Email	
 	if (!property_exists($request, 'email') 
