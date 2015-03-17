@@ -100,7 +100,9 @@ function packageNoteReportAPIRequest(note_id, reason) {
 
 
 
+
 //Add more constructors as needed
+
 
 
 
@@ -361,6 +363,7 @@ function logoutRequest() {
 }
 
 
+
 /*
  * Send note vote to server and update the note on screen.
  * @param upvote	't' if upvote, 'f' is downvote
@@ -386,6 +389,8 @@ function noteReportRequest(note_is, reason) {
 				alert("Report has been sent. Thank you for keeping our timelines safe!");	
 			}	
 }
+
+
 
 
 /***************************Control Functions****************************/
