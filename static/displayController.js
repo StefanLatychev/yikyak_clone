@@ -1,5 +1,7 @@
 //Display Controller
 
+var username;
+
 /*******************************Constructors******************************/
 
 //Constructor for Registraction api request object
@@ -14,16 +16,26 @@ function packageRegistrationAPIRequest(email1, email2, phone, password, confirm)
 	return request_payload;
 }
 
-//Constructor for Login api request object
-function packageLoginAPIRequest(username, password) {
+
+//Constructor for basic authentication api request object
+function packageBasicAPIRequest(email, password) {
 	var request_payload = {
-		email : username,
+		email : email,
 		password : password
 	}
 	return request_payload;
 }
 
-//Add more constructors.
+
+
+//Add more constructors as needed
+
+
+
+
+
+
+
 
 
 
@@ -67,6 +79,11 @@ function changeDisplay(page_to_display) {
 
 
 
+
+
+
+
+
 /***************************Validation Functions****************************/
 
 //Login validation, packaging, and sending as request to api
@@ -76,8 +93,8 @@ function loginValidation() {
 
 	//Validation and field variables
 	var validated = true;
-	var email = $("input#login_email").val();
-	var password = $("input#login_password").val();
+	var email = $("#login_email").val();
+	var password = $("#login_password").val();
 
 	//Email Validation
 	if(email == ""){
@@ -92,14 +109,15 @@ function loginValidation() {
 		$("input#login_password").focus();
 		validated = false;
 	}
-
+	
+	
 	//Validation check
 	if(!validated){
 		return false;
 	}
-	
+	username = email;
 	//Package and send request
-	var payloadString = JSON.stringify(packageLoginAPIRequest(email, password));
+	var payloadString = JSON.stringify(packageBasicAPIRequest(email, password));
 	sendAPIRequest("api/authentication.php", "POST", payloadString, loginValidated);
 	return false;
 }
@@ -167,24 +185,114 @@ function registerValidation(){
 	var payloadString = JSON.stringify(packageRegistrationAPIRequest(email1, email2, phone, password, confirm));
 	sendAPIRequest("api/user.php", "POST", payloadString, registrationValidated);
 	return false;
-};
+}
+
+
+//Prompt for reauthentication
+function authValidation() {	
+	//Hide all error labels
+	$('.error').hide();
+	
+	var email = $("input#authenticate_email").val();
+	var password = $("input#authenticate_password").val();
+	var validated = true;
+	
+	//Email Validation
+	if(email == ""){
+		$("label#authenticate_email_error").show();
+		$("input#authenticate_email").focus();
+		validated = false;
+	}
+	if(email != username){
+		$("label#authenticate_error").show();
+		return false;
+	}
+	
+	//Password Validation
+	if(password == ""){
+		$("label#authenticate_password_error").show();
+		$("input#authenticate_password").focus();
+		validated = false;
+	}
+	
+	if(!validated) {
+		return false;
+	}
+	
+	var payloadString = JSON.stringify(packageBasicAPIRequest(email, password));
+	sendAPIRequest("api/user.php", "GET", payloadString, userInfo);
+	return false;
+}
+
+
+//Request server to logout
+function logoutRequest() {
+	var payloadString = JSON.stringify({});
+	sendAPIRequest("api/authentication.php", "DELETE", payloadString, logout);
+	return false;
+}
+
+
+
+
+
+
+
 
 
 
 /***************************Control Functions****************************/
 
+//User has registered account, send to login page
 function registrationValidated(response_object) {
-	alert("Account has been registered.\nThank You!");
 	changeDisplay('login');
 	return false;
 }
 
 
+//User has logged in, send to main page
 function loginValidated(response_object) {
-	alert("Logging you in");
 	changeDisplay('main');
 	return false;
 }
+
+
+//User has logged out, send to login page
+function logout() {
+	changeDisplay('login');
+	return false;
+}
+
+
+//User has authenticated, send to account page and construct user info profile
+function userInfo(response_object) {
+	changeDisplay('account');
+	var account_info_form = document.createElement("fieldset");
+	var user_info_table = document.createElement("table");
+	account_info_form.appendChild(user_info_table);
+	var user_info = response_object.user_info;
+	
+	for(var key in user_info){
+		var table_row = document.createElement("tr");
+		user_info_table.appendChild(table_row);
+		if(user_info.hasOwnProperty(key)){
+			var table_element = document.createElement("td");
+			table_row.appendChild(table_element);
+			var user_info_content = document.createTextNode(key+": "+user_info[key]);
+			table_element.appendChild(user_info_content);
+		}
+	}
+	document.getElementById('user_info').appendChild(account_info_form);
+	return false;
+}
+
+
+
+
+
+
+
+/***************************API Request Functions****************************/
 
 
 /*
@@ -210,7 +318,7 @@ function sendAPIRequest(
 				alert(result_object.status);
 				alert(STATUS_OK);
 				alert(Number(result_object.status) === STATUS_OK);
-				*/
+				//*/
 				
 				switch(Number(result_object.status)){
 					case STATUS_OK:
@@ -222,7 +330,7 @@ function sendAPIRequest(
 						//alert("Bad Request");
 						break;
 					case STATUS_UNAUTHORIZED:
-						//Display info
+						changeDisplay('error');
 						break;
 					case STATUS_FORBIDDEN:
 						//Display info

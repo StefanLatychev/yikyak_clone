@@ -31,32 +31,33 @@
 			<form id="login_form" method="post">
 				<h1>Login</h1>
 				<fieldset>
-					<table>
-						<tr>
-							<!--Email-->
-							<td><label for="login_email" id="login_email_label">Email</label></td>
-							<td><input type="text" id="login_email" placeholder="Email" /></td>
-							<td><label class="error" for="login_email" id="login_email_error">Please enter your email</label></td>
-						</tr>
+					
+					<!--Email-->
+					<div class="email" id="login_email_div">
+						<label for="login_email" id="login_email_label">Email</label>
+						<input type="text" id="login_email" placeholder="Email" />
+						<label class="error" for="login_email" id="login_email_error">Please enter your email</label>
+					</div>
 
-						<tr>
-							<!--Password-->
-							<td><label for="login_password" id="login_password_label">Password</label></td>
-							<td><input type="password" id="login_password" placeholder="Password" /></td>
-							<td><label class="error" for="login_password" id="login_password_error">Please enter your password</label></td>
-						</tr>
-
-					</table>
-
+					<!--Password-->
+					<div class="password" id="login_password_div">
+						<label for="login_password" id="login_password_label">Password</label>
+						<input type="password" id="login_password" placeholder="Password" />
+						<label class="error" for="login_password" id="login_password_error">Please enter your password</label>						
+					</div>
+					
 					<!--Login Button-->
-					<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
-
+					<div class="login" id="login_btn_div">
+						<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
+					</div>
+					
 					<!--Registration Button-->
-					<input type="button" name="register" class="button" id="register_btn" value="Register" onclick="changeDisplay('registration');" />
-
+					<div class="register" id="register_btn_div">
+						<input type="button" name="register" class="button" id="register_btn" value="Register" onclick="changeDisplay('registration');" />
+					</div>
+					
 				</fieldset>
 			</form>
-
 		</div>
 
 
@@ -66,54 +67,60 @@
 			<form id="registration_form" method="post">
 				<h1>Registration</h1>
 				<fieldset>
-					<table>
-						<tr>
-							<!--Email-->
-							<td><label for="email1" id="email1_label">Email</label></td>
-							<td><input type="text" name="email1" id="email1" placeholder="Email" /></td>
-							<td><label class="error" for="email1" id="email1_error">This field is required</label></td>
-						</tr>
+				
+					<!--Email-->
+					<div class="email" id="registration_email_div">
+						<label for="email1" id="email1_label">Email</label>
+						<input type="text" name="email1" id="email1" placeholder="Email" />
+						<label class="error" for="email1" id="email1_error">This field is required</label>
+					</div>
 
-						<tr>
-							<!--Email Confirmation-->
-							<td><label for="email2" id="email2_label">Confirm Email</label></td>
-							<td><input type="text" name="email2" id="email2" placeholder="Email" /></td>
-							<td><label class="error" for="email2" id="email2_error">This field is required</label>
-								<label class="error" for="email2" id="email2_error2">Emails do not match</label></td>
-						</tr>
+						
+					<!--Email Confirmation-->
+					<div class="email" id="registration_email2_div">
+						<label for="email2" id="email2_label">Confirm Email</label>
+						<input type="text" name="email2" id="email2" placeholder="Email" />
+						<label class="error" for="email2" id="email2_error">This field is required</label>
+						<label class="error" for="email2" id="email2_error2">Emails do not match</label>
+					</div>
 
-						<tr>
-							<!--Phone-->
-							<td><label for="phone" id="phone_label">Phone Number</label></td>
-							<td><input type="text" name="phone" id="phone" placeholder="Phone Number" /></td>
-							<td><label class="error" for="phone" id="phone_error">Invalid characters</label></td>
-						</tr>
+						
+					<!--Phone-->
+					<div class="phone" id="registration_phone_div">
+						<label for="phone" id="phone_label">Phone Number</label>
+						<input type="text" name="phone" id="phone" placeholder="Phone Number" />
+						<label class="error" for="phone" id="phone_error">Invalid characters</label>
+					</div>	
 
-						<tr>
-							<!--Password-->
-							<td><label for="password" id="password_label">Password</label></td>
-							<td><input type="password" name="password" id="password" placeholder="Password" /></td>
-							<td><label class="error" for="password" id="password_error">This field is required</label></td>
-						</tr>
+						
+					<!--Password-->
+					<div class="password" id="registration_password_div">
+						<label for="password" id="password_label">Password</label>
+						<input type="password" name="password" id="password" placeholder="Password" />
+						<label class="error" for="password" id="password_error">This field is required</label>
+					</div>	
 
-						<tr>
-							<!--Password Confirmation-->
-							<td><label for="confirm" id="confirm_label">Password</label></td>
-							<td><input type="password" name="confirm" id="confirm" placeholder="Confirm Password" /></td>
-							<td><label class="error" for="confirm" id="confirm_error">This field is required</label>
-								<label class="error" for="confirm" id="confirm_error2">Passwords do not match</label></td>
-						</tr>
+						
+					<!--Password Confirmation-->
+					<div class="password" id="registration_password2_div">
+						<label for="confirm" id="confirm_label">Password</label>
+						<input type="password" name="confirm" id="confirm" placeholder="Confirm Password" />
+						<label class="error" for="confirm" id="confirm_error">This field is required</label>
+						<label class="error" for="confirm" id="confirm_error2">Passwords do not match</label>
+					</div>	
 
-					</table>
 
 					<!--Register Button-->
-					<input type="button" name="register" class="button" id="register_btn" value="Register Account" onclick="registerValidation();" />
+					<div class="register" id="registration_btn_div">
+						<input type="button" name="register" class="button" id="register_btn" value="Register Account" onclick="registerValidation();" />
+					</div>
+					
 					<!--Go Back Button-->
-					<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('login');" />
-
+					<div class="back" id="back_btn_div">
+						<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('login');" />
+					</div>
 				</fieldset>
 			</form>
-
 		</div>
 
 
@@ -123,72 +130,156 @@
 			<form id="main_form" method="post">
 				<h1>Main Page Under Construction</h1>
 				<fieldset>
-					<table>
-						<!--Map-->	
-						<tr>
-							<td>
-								<label id="map_label">MAP</label>
-								<!--Get rid of style-->
-								<div id="googleMap" style="width:1000px;height:540px;"></div>
-							</td>
-						</tr>
+					
+					<!--Map-->	
+					<div class="map" id="main_map_div">
+						<div id="map"><label id="map_label">Map</label></div>
+						<!--Get rid of style-->
+						<div id="googleMap" style="width:1000px;height:540px;"></div>
+					</div>
 				
-						<!--Toolbar-->
-						<tr>
-							<td>
-								<label id="toolbar_label">TOOLBAR</label>
-								<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('account');" />
-								<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="changeDisplay('login');" />
-								<!--<input type="button" name="update" class="button" id="update_btn" value="Settings" onclick="updateInfo();" />-->
-							</td>
-						</tr>
+				
+				
+					<!--Toolbar-->
+					<div class="toolbar" id="main_toolbar_div">
+						<div id="toolbar"><label id="toolbar_label">Toolbar</label></div>
 						
-						<!--Channel-->
-						<tr>
-							<td>
-								<label id="channel_label">CHANNEL</label>
-								<div id="timeline">
-								
-								</div>
-							</td>
-						</tr>
+						<!--User Info-->
+						<div class="info" id="main_info_btn">
+							<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('authenticate');" />
+						</div>
 						
-						<!--Message-->
-						<tr>
-							<td>
-								<input type="text" name="message" id="message" placeholder="Message" />
-								<input type="button" name="send" class="button" id="send_btn" value="Send" onclick="sendMessage();" />
-							</td>
-						</tr>
+						<!--Logout-->
+						<div class="logout" id="main_logout_btn">
+							<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="logoutRequest();" />
+						</div>
+					</div>
+						
+						
+						
+					<!--Timeline-->
+					<div class="timeline" id="main_timeline_div">
+						<label id="channel_label">Timeline</label>
+						<div id="timeline">
 							
-				
-					</table>
+						</div>
+					</div>
+					
+					
+					
+					<!--Message-->
+					<div class="message" id="main_message_div">
+						<input type="text" name="message" id="message" placeholder="Message" />
+					</div>
+					
+					
+						
+					<!--Send-->
+					<div class="send" id="main_send_div">
+						<input type="button" name="send" class="button" id="send_btn" value="Send" onclick="sendMessage();" />
+					</div>
 				</fieldset>
 			</form>
 		</div>
+		
+		
+		
+		<!-- Authentication div -->
+		<div class="authentication_page" id="authenticate">
+			<form id="authentication_form" method="post">
+				<h1>Authentication</h1>
+				<fieldset>
+					<!--Email-->
+					<div class="email" id="authenticate_email_div">
+						<label for="authenticate_email" id="authenticate_email_label">Email</label>
+						<input type="text" id="authenticate_email" placeholder="Email" />
+						<label class="error" for="authenticate_email" id="authenticate_email_error">Please enter your email</label>
+					</div>
+
+					<!--Password-->
+					<div class="password" id="authenticate_password_div">
+						<label for="authenticate_password" id="authenticate_password_label">Password</label>
+						<input type="password" id="authenticate_password" placeholder="Password" />
+						<label class="error" for="authenticate_password" id="authenticate_password_error">Please enter your password</label>						
+					</div>
+					
+					<!--Back Button-->
+					<div class="back" id="authenticate_back_btn_div">
+						<input type="button" name="back" class="button" id="authenticate_back_btn" value="Back" onclick="changeDisplay('main');" />
+					</div>
+					
+					<!--Login Button-->
+					<div class="login" id="authenticate_btn_div">
+						<input type="button" name="login" class="button" id="authenticate_btn" value="Login" onclick="authValidation();" />
+						<label class="error" for="authenticate_btn" id="authenticate_error">Invalid Credentials</label>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+			
+		
 		
 		<!-- Account Info div -->
 		<div class="account_page" id="account">
 			<form id="account_form" method="post">
 				<h1>Account Page Under Construction</h1>
 				<fieldset>
-					<table>			
-						<tr>
-							<td>
-								<input type="button" name="update" class="button" id="update_btn" value="Update Account Info" onclick="updateAccountInfo();" />
-								<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('main');" />
-							</td>
-						</tr>
-					</table>
+					<h1>Account Info</h1>
+					<!--User Information will be loaded in through js-->
+					<div id="user_info">
+							
+					</div>	
+						
+					<!--Update User Info-->
+					<div class="update" id="account_update_btn">
+						<input type="button" name="update" class="button" id="update_btn" value="Update Account Info" onclick="updateAccountInfo();" />
+					</div>
+					
+					<!--Back-->
+					<div class="back" id="account_back_btn" >
+						<input type="button" name="back" class="button" id="back_btn" value="Go Back" onclick="changeDisplay('main');" />
+					</div>
 				</fieldset>
 			</form>
 		</div>
 		
+		
+		
 		<!-- Error Page div -->
-		<div class="error_page" id="error_page">
+		<div class="error_page" id="error">
+			<form id="error_form" method="post">
+				<h1>Oops! Please log in.</h1>
+				<fieldset>
+					
+					<!--Email-->
+					<div class="email" id="error_email_div">
+						<label for="error_login_email" id="error_login_email_label">Email</label>
+						<input type="text" id="error_login_email" placeholder="Email" />
+						<label class="error" for="error_login_email" id="error_login_email_error">Please enter your email</label>
+					</div>
+					
+					
+					<!--Password-->
+					<div class="password" id="error_password_div">
+						<label for="error_login_password" id="error_login_password_label">Password</label>
+						<input type="password" id="error_login_password" placeholder="Password" />
+						<label class="error" for="error_login_password" id="error_login_password_error">Please enter your password</label>
+					</div>
+
+					<!--Login Button-->
+					<div class="login" id="error_login_btn">		
+						<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
+					</div>
+					
+				</fieldset>
+			</form>
 		</div>
 
+
+
 	</div>
+	
+	
 	
 	<!-- Initialization -->
 	<script>
