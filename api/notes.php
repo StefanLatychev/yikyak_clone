@@ -83,15 +83,22 @@ function apiGetNotes(&$request, &$response) {
  * Submit a note to the database.
  */
 function apiSubmitNote(&$request, &$response) {
+	$safe_note_message = null;
+
 	// Make sure user is authenticated	
 	if (!$user_id = isAuthenticated($response)) {
 		return;
 	}
 
 	// TODO(sdsmith): input validation
+
+	// Escape all escapable characters with their html encoding equivalent
+	// so the text is safe to put directly into an html page.
+	$safe_note_message = htmlentities($request->message, ENT_QUOTES);
+
 	
 	if (dbInsertNote($user_id, $request->location->latitude, 
-			$request->location->longitude, $request->message)) {
+			$request->location->longitude, $safe_note_message)) {
 		$response['status'] = STATUS_OK;
 	} else {
 		// Insert failed
