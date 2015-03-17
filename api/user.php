@@ -8,6 +8,7 @@ require_once('verification.php');
 /*
  * Register a new user with the database. Return API response.
  */
+// TODO(sdsmith): impose password, email and phone length limits
 function apiRegisterNewUser(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 	$valid_input = true;
@@ -229,6 +230,7 @@ function apiGetUserInfo(&$encoded_request) {
 	}
 
 	// Set information
+	unset($user_info['id']);	// do not give the user their own id
 	$response['user_info'] = $user_info;
 	$response['status'] = STATUS_OK;
 
