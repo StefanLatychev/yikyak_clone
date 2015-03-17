@@ -19,7 +19,7 @@ function apiRegisterNewUser(&$encoded_request) {
 		return $response;
 	}
 	
-	// Verifiy input
+	/***** Verifiy input *****/
 	// Check email is present
 	if (!parameterExists($request, 'email1') 
 				|| !parameterExists($request, 'email2')) 
@@ -42,6 +42,7 @@ function apiRegisterNewUser(&$encoded_request) {
 		return $response;
 	}
 
+	/*** Check each parameter value ***/
 	// email1
 	if (!whitelistString($request->email1, WHITELIST_REGEX_EMAIL)) {
 		$valid_input = false;
@@ -80,6 +81,33 @@ function apiRegisterNewUser(&$encoded_request) {
 		$response['status'] = STATUS_BAD_REQUEST;
 		return $response;
 	}
+
+	/*** Check length limits ***/ 
+	// TODO(sdsmith): Do length limit checks before regex tests, because
+	// long strings will have large regex cost.
+
+	// email
+	if (!isValidLength($request->email1, LEN_MAX_EMAIL)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid email length';
+	}
+	// phone number
+	if (parameterExists($request, 'phone_number') && !isValidLength($request->phone_number, LEN_MAX_PHONE_NUMBER, LEN_MIN_PHONE_NUMBER)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid phone number length';
+	}
+
+	// password
+ 	if (!isValidLength($request->password1, LEN_MAX_PASSWORD, LEN_MIN_PASSWORD)) {
+		$valid_input = false;
+		$response['errors'][] = 'Invalid password length';
+	}
+
+	// Confirm valid input lengths
+	if (!$valid_input) {
+		$response['status'] = STATUS_BAD_REQUEST;
+	}
+
 
 	// Confirm there will be no duplicate email or phone number in database
 	if (dbExistsEmail($request->email1)) {
