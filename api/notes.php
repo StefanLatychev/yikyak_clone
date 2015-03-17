@@ -163,7 +163,7 @@ function apiSubmitNote(&$request, &$response) {
 	}
 
 	// Check message
-	if (property_exists($request, 'message')) {
+	if (parameterExists($request, 'message')) {
 		// Escape all escapable characters with their html encoding 
 		// equivalent so the text is safe to put directly into an html 
 		// page.
