@@ -5,7 +5,6 @@ require_once('../models/database/user.php');
 
 
 
-// VERIFIED
 /*
  * Register a new user with the database. Return API response.
  */
@@ -53,7 +52,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	$response = getAPIResponseTemplate();
 	
 	// Make sure user is authenticated
-	if (!isAuthenticated($response)) {
+	if (!$requester_info = isAuthenticated($response)) {
 		return $response;
 	}
 
@@ -74,7 +73,10 @@ function apiUpdateUserInfo(&$encoded_request) {
 
 
 	// Validate user provided credentials
-	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password)) {
+	if (!$user_info = dbAuthenticateUser($request->current_email, $request->current_password) 
+		// Confirm credentials provided match the session key owner
+		|| $requester_info['id'] != $user_info['id']))
+	{
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
 		return $response;
@@ -94,7 +96,6 @@ function apiUpdateUserInfo(&$encoded_request) {
 
 
 
-// VERIFIED
 /*
  * Get dump of the current user's information.
  */
