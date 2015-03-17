@@ -369,7 +369,7 @@ function logoutRequest() {
  * @param upvote	't' if upvote, 'f' is downvote
  */
 function noteVoteRequest(note_id, upvote) {
-	var payloadString = JSON.stringify(packageNoteVoteAPIRequest(note_id, upvote);
+	var payloadString = JSON.stringify(packageNoteVoteAPIRequest(note_id, upvote));
 	sendAPIRequest("api/notes.php", "PUT", payloadString, 
 			function(request_object) {
 				// TODO():
