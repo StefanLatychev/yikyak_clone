@@ -35,33 +35,34 @@
 		<div class="login_page" id="login">
 			<form id="login_form" method="post">
 				<h1>Login</h1>
-				<fieldset id="login_fieldset">
+				<div class="data_form" id="login_fieldset">
 					
 					<!--Email-->
 					<div class="form_input" id="login_email_div">
 						<label for="login_email" id="login_email_label">Email</label>
-						<input type="text" id="login_email" placeholder="Email" />
+						<input class="input" type="text" id="login_email" placeholder="Email" />
 						<label class="error" for="login_email" id="login_email_error">Please enter your email</label>
 					</div>
 
 					<!--Password-->
 					<div class="form_input" id="login_password_div">
 						<label for="login_password" id="login_password_label">Password</label>
-						<input type="password" id="login_password" placeholder="Password" />
+						<input class="input" type="password" id="login_password" placeholder="Password" />
 						<label class="error" for="login_password" id="login_password_error">Please enter your password</label>						
 					</div>
 					
-					<!--Login Button-->
-					<div class="nav_button" id="login_btn_div">
-						<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
-					</div>
+					<div id="login_nav">
+						<!--Login Button-->
+						<div class="nav_button" id="login_btn_div">
+							<input type="button" name="login" class="button" id="login_btn" value="Login" onclick="loginValidation();" />
+						</div>
 					
-					<!--Registration Button-->
-					<div class="nav_button" id="register_btn_div">
-						<input type="button" name="register" class="button" id="register_btn" value="Register" onclick="changeDisplay('registration');" />
+						<!--Registration Button-->
+						<div class="nav_button" id="register_btn_div">
+							<input type="button" name="register" class="button" id="register_btn" value="Register" onclick="changeDisplay('registration');" />
+						</div>
 					</div>
-					
-				</fieldset>
+				</div>
 			</form>
 		</div>
 
@@ -71,12 +72,12 @@
 		<div class="registration_page" id="registration">
 			<form id="registration_form" method="post">
 				<h1>Registration</h1>
-				<fieldset id="registration_fieldset">
+				<fieldset class="data_form" id="registration_fieldset">
 				
 					<!--Email-->
 					<div class="form_input" id="registration_email_div">
 						<label for="email1" id="email1_label">Email</label>
-						<input type="text" name="email1" id="email1" placeholder="Email" />
+						<input class="input" type="text" name="email1" id="email1" placeholder="Email" />
 						<label class="error" for="email1" id="email1_error">This field is required</label>
 					</div>
 
@@ -84,7 +85,7 @@
 					<!--Email Confirmation-->
 					<div class="form_input" id="registration_email2_div">
 						<label for="email2" id="email2_label">Confirm Email</label>
-						<input type="text" name="email2" id="email2" placeholder="Email" />
+						<input class="input" type="text" name="email2" id="email2" placeholder="Email" />
 						<label class="error" for="email2" id="email2_error">This field is required</label>
 						<label class="error" for="email2" id="email2_error2">Emails do not match</label>
 					</div>
@@ -93,7 +94,7 @@
 					<!--Phone-->
 					<div class="form_input" id="registration_phone_div">
 						<label for="phone" id="phone_label">Phone Number</label>
-						<input type="text" name="phone" id="phone" placeholder="Phone Number" />
+						<input class="input" type="text" name="phone" id="phone" placeholder="Phone Number" />
 						<label class="error" for="phone" id="phone_error">Invalid characters</label>
 					</div>	
 
@@ -101,7 +102,7 @@
 					<!--Password-->
 					<div class="form_input" id="registration_password_div">
 						<label for="password" id="password_label">Password</label>
-						<input type="password" name="password" id="password" placeholder="Password" />
+						<input class="input" type="password" name="password" id="password" placeholder="Password" />
 						<label class="error" for="password" id="password_error">This field is required</label>
 					</div>	
 
@@ -109,7 +110,7 @@
 					<!--Password Confirmation-->
 					<div class="form_input" id="registration_password2_div">
 						<label for="confirm" id="confirm_label">Password</label>
-						<input type="password" name="confirm" id="confirm" placeholder="Confirm Password" />
+						<input class="input" type="password" name="confirm" id="confirm" placeholder="Confirm Password" />
 						<label class="error" for="confirm" id="confirm_error">This field is required</label>
 						<label class="error" for="confirm" id="confirm_error2">Passwords do not match</label>
 					</div>	
@@ -198,14 +199,14 @@
 					<!--Email-->
 					<div class="form_input" id="authenticate_email_div">
 						<label for="authenticate_email" id="authenticate_email_label">Email</label>
-						<input type="text" id="authenticate_email" placeholder="Email" />
+						<input class="input" type="text" id="authenticate_email" placeholder="Email" />
 						<label class="error" for="authenticate_email" id="authenticate_email_error">Please enter your email</label>
 					</div>
 
 					<!--Password-->
 					<div class="form_input" id="authenticate_password_div">
 						<label for="authenticate_password" id="authenticate_password_label">Password</label>
-						<input type="password" id="authenticate_password" placeholder="Password" />
+						<input class="input" type="password" id="authenticate_password" placeholder="Password" />
 						<label class="error" for="authenticate_password" id="authenticate_password_error">Please enter your password</label>						
 					</div>
 					
