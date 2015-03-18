@@ -44,18 +44,10 @@ h1 {
 	margin-right: auto;
 }
 
-#main_fieldset {
-
-	position: fixed;
-	width: 90em;
-	height: 50em;
-
-}
-
 
 #googleMap {
 	position: fixed;
-	width: 30em;
+	width: 34%;
 	height: 40em;
 	float: left;
 
@@ -63,7 +55,7 @@ h1 {
 
 #main_timeline_div {
 	margin-right: auto;
-	width: 35em;
+	width: 66%;
 	height: 38em;
 	float: right;
 	overflow: auto;
