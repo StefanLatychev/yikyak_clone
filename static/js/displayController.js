@@ -496,10 +496,6 @@ function displayNotes(response_object) {
 		var note_div = document.createElement("div");
 		note_div.className = "note"; 
 		note_div.id = "note_" + notes[note].id;
-		
-		//var note_fieldset = document.createElement("fieldset");
-		//note_fieldset.id = "note_fieldset";
-		//note_div.appendChild(note_fieldset);
 			
 			//Note message div
 			var note_message_div = document.createElement("div");
