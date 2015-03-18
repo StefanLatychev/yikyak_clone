@@ -499,12 +499,11 @@ function displayNotes(response_object) {
 			
 			//Note message div
 			var note_message_div = document.createElement("div");
-			note_message_div.id = "note_message";
+			note_message_div.classMessage = "note_message_div";
 				
 				//Note message span
 				var note_message_span = document.createElement("span");
-				note_message_span.className = "note_message";
-				note_message_span.id = "note_message";
+				note_message_span.className = "note_message_span";
 				note_message_span.innerHTML = notes[note].message;
 				note_message_div.appendChild(note_message_span);
 			
@@ -542,18 +541,15 @@ function displayNotes(response_object) {
 			
 			//Note metadata div
 			var note_metadata_wrapper_div = document.createElement("div");
-			note_metadata_wrapper_div.className = "wrapper_note_metadata";
-			note_metadata_wrapper_div.id = "wrapper_note_metadata";
+			note_metadata_wrapper_div.className = "wrapper_note_metadata_div";
 			
 				//Note post time wrapper div
 				var note_posttime_wrapper_div = document.createElement("div");
-				note_posttime_wrapper_div.className = "wrapper_note_posttime";
-				note_posttime_wrapper_div.id = "wrapper_note_posttime";
+				note_posttime_wrapper_div.className = "wrapper_note_posttime_div";
 					
 					//Note post time wrapper span
 					var note_posttime_wrapper_span = document.createElement("span");
-					note_posttime_wrapper_span.className = "note_posttime";
-					note_posttime_wrapper_span.id = "note_posttime";
+					note_posttime_wrapper_span.className = "note_posttime_span";
 					note_posttime_wrapper_span.innerHTML = notes[note].time;
 					note_posttime_wrapper_div.appendChild(note_posttime_wrapper_span);
 				
@@ -561,13 +557,11 @@ function displayNotes(response_object) {
 				
 				//Note vote count wrapper div
 				var note_votecount_wrapper_div = document.createElement("div");
-				note_votecount_wrapper_div.className = "wrapper_note_votecount";
-				note_votecount_wrapper_div.id = "wrapper_note_votecount";
+				note_votecount_wrapper_div.className = "wrapper_note_votecount_div";
 					
 					//Note vote count wrapper span
 					var note_votecount_wrapper_span = document.createElement("span");
-					note_votecount_wrapper_span.className = "note_votecount";
-					note_votecount_wrapper_span.id = "note_votecount";
+					note_votecount_wrapper_span.className = "note_votecount_span";
 					note_votecount_wrapper_span.innerHTML = notes[note].votes;
 					note_votecount_wrapper_div.appendChild(note_votecount_wrapper_span);
 				
