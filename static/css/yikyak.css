@@ -1,0 +1,58 @@
+.nav_button .button {
+	margin:0.2em 0.2em 0.2em 0.2em;
+	padding:0;
+	float:left;
+	padding:0 2px 0 2px;
+	font-family:Arial, serif;
+	font-weight:bold;
+	color:#000;
+	background:#FFF;
+	text-decoration: none;
+}
+
+#login_fieldset {
+	margin-top: 5em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 22em;
+}
+
+.data_form .form_input label {
+	display: inline-block;
+	text-align: right;
+	width: 6em;
+}
+
+.data_form .nav_button {
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+
+.data_form .input {
+	display: inline-block;
+}
+
+
+/* Style page headers */
+h1 {
+	letter-spacing: 1.5em;
+	text-transform: uppercase;
+	text-align: center;
+	text-shadow: 0.1em 0.1em #bbbbbb;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
