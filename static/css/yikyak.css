@@ -52,6 +52,13 @@ h1 {
 }
 
 
+/***** Main page *****/
+.note .note_message {
+	width: 60%;
+}
+
+
+
 #googleMap {
 	position: fixed;
 	width: 34%;
