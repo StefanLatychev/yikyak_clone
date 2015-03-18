@@ -136,55 +136,49 @@
 			<form id="main_form" method="post">
 				<h1>YikYak Clone</h1>
 				<fieldset id="main_fieldset">
-					<!--Map-->	
-					<div class="map" id="main_map_div">
-						<div id="map"><label id="map_label">Map</label></div>
-						<!--Get rid of style-->
-						<div id="googleMap" style="width:1000px;height:540px;"></div>
+					<div id="screen_top" >
+						<!--Map-->	
+						<div class="map" id="main_map_div">
+							<div id="googleMap"></div>
+						</div>
+				
+				
+						<!--Timeline-->
+						<div class="timeline" id="main_timeline_div">
+						
+							<div id="timeline">
+								
+							</div>
+
+						</div>
 					</div>
 				
-				
-				
-					<!--Toolbar-->
-					<div class="toolbar" id="main_toolbar_div">
-						<div id="toolbar"><label id="toolbar_label">Toolbar</label></div>
+					
+					<div id="screen_bottom" >
+					
+						<!--Toolbar-->
+						<div class="toolbar" id="main_toolbar_div">
 						
-						<!--User Info-->
-						<div class="info" id="main_info_btn">
+							<!--User Info-->
 							<input type="button" name="info" class="button" id="info_btn" value="Account Info" onclick="changeDisplay('authenticate');" />
-						</div>
-						
-						<!--Logout-->
-						<div class="logout" id="main_logout_btn">
+							
+							<!--Logout-->
 							<input type="button" name="logout" class="button" id="logout_btn" value="Logout" onclick="logoutRequest();" />
 						</div>
-					</div>
 						
-						
-						
-					<!--Timeline-->
-					<div class="timeline" id="main_timeline_div">
-						<label id="channel_label">Timeline</label>
-						
-						<div id="timeline">
+						<!--Message-->
+						<div class="message" id="main_message_div">
+							<input type="textbox" name="message" id="message" placeholder="Message" />
+							
+							<!--Send-->
+							<!--<div class="send" id="main_send_div">-->
+							<input type="button" name="send" class="button" id="send_btn" value="Send" onclick="sendMessage();" />
+							<!--</div>-->
 							
 						</div>
-
+					
 					</div>
 					
-					
-					
-					<!--Message-->
-					<div class="message" id="main_message_div">
-						<input type="textbox" name="message" id="message" placeholder="Message" />
-					</div>
-					
-					
-						
-					<!--Send-->
-					<div class="send" id="main_send_div">
-						<input type="button" name="send" class="button" id="send_btn" value="Send" onclick="sendMessage();" />
-					</div>
 				</fieldset>
 			</form>
 		</div>
