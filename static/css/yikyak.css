@@ -68,6 +68,11 @@ h1 {
 	overflow: auto;
 }
 
+.note {
+	margin: 0 auto;
+	width: 20%;
+}
+
 #screen_bottom {
 	clear: both;
 }
