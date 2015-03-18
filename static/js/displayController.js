@@ -504,7 +504,6 @@ function displayNotes(response_object) {
 			//Note message div
 			var note_message_div = document.createElement("div");
 			note_message_div.id = "note_message";
-			//note_message_div.className = "note_message";
 				
 				//Note message span
 				var note_message_span = document.createElement("span");
@@ -518,12 +517,10 @@ function displayNotes(response_object) {
 			//Vote wrapper div
 			var vote_wrapper_div = document.createElement("div");
 			vote_wrapper_div.className = "wrapper_vote";
-			//vote_wrapper_div.id = "wrapper_vote";
 				
 				//Vote options wrapper div
 				var vote_wrapper_options_div = document.createElement("div");
 				vote_wrapper_options_div.className = "wrapper_vote_options";
-				//vote_wrapper_options_div.id = "wrapper_vote_options";
 					
 					//Upvote button
 					var upvote_button = document.createElement("button");
@@ -531,7 +528,6 @@ function displayNotes(response_object) {
 					upvote_button.id = "upvote_btn_"+notes[note].id;
 					upvote_button.value = "Upvote";
 					upvote_button.type = "button";
-					//upvote_button.onclick = noteVoteRequest(notes[note].id.toString(), 't');
 					upvote_button.innerHTML = "Upvote";
 					vote_wrapper_options_div.appendChild(upvote_button);
 					
@@ -541,7 +537,6 @@ function displayNotes(response_object) {
 					downvote_button.id = "downvote_btn_"+notes[note].id;
 					downvote_button.value = "Downvote";
 					downvote_button.type = "button";
-					//downvote_button.onclick = noteVoteRequest(notes[note].id.toString(), 'f');
 					downvote_button.innerHTML = "Downvote";
 					vote_wrapper_options_div.appendChild(downvote_button);
 					

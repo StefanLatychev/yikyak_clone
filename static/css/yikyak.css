@@ -44,7 +44,42 @@ h1 {
 	margin-right: auto;
 }
 
+#main_fieldset {
 
+	position: fixed;
+	width: 90em;
+	height: 50em;
+
+}
+
+
+#googleMap {
+	position: fixed;
+	width: 30em;
+	height: 40em;
+	float: left;
+
+}
+
+#main_timeline_div {
+	margin-right: auto;
+	width: 35em;
+	height: 38em;
+	float: right;
+	overflow: auto;
+}
+
+#screen_bottom {
+	clear: both;
+}
+
+#main_toolbar_div {
+	float: left;
+}
+
+#main_message_div {
+	float: right;
+}
 
 
 
