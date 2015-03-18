@@ -235,8 +235,8 @@ function registerValidation(){
 	}	
 	
 	//Phone Validation
-	var num = new RegExp("[0-9]*");
-	if(phone != "" && num.test(phone)) {
+	var num = new RegExp("[0-9]+");
+	if(phone != "" && !num.test(phone)) {
 		validated = false;
 	}
 	
@@ -568,9 +568,11 @@ function displayNotes(response_object) {
 				note_metadata_wrapper_div.appendChild(note_votecount_wrapper_div);
 			
 			note_div.appendChild(note_metadata_wrapper_div);
-			
+		
 		document.getElementById('timeline').appendChild(note_div);
 		
+		
+		//Functions that are called on mouse up for upvote/downvote buttons
 		$('#note_'+notes[note].id).on('mouseup', '.upvote', function(event) {
 
 			noteVoteRequest(event.target.id.toString().split("_")[2], 't');
