@@ -8,15 +8,9 @@ require_once('verification.php');
 /*
  * Register a new user with the database. Return API response.
  */
-function apiRegisterNewUser(&$encoded_request) {
-	$response = getAPIResponseTemplate();
+function apiRegisterNewUser(&$request, &$response) {
 	$valid_input = true;
 
-	// Decode request
-	// NOTE(sdsmith): makes assumption it's a json request
-	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		return $response;
-	}
 	
 	/***** Verifiy input *****/
 	// Check email is present
@@ -38,7 +32,7 @@ function apiRegisterNewUser(&$encoded_request) {
 	// Confirm required information is present
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	/*** Check each parameter value ***/
@@ -78,7 +72,7 @@ function apiRegisterNewUser(&$encoded_request) {
 	// Confirm valid input
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	/*** Check length limits ***/ 
@@ -122,7 +116,7 @@ function apiRegisterNewUser(&$encoded_request) {
 	// Confirm no duplicate entries in database
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	// Confirm email/password information matches
@@ -130,7 +124,7 @@ function apiRegisterNewUser(&$encoded_request) {
 			$request->password1 == $request->password2)) {
 		$response['errors'][] = 'Email and/or password information does not match';
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	// Register user
@@ -142,8 +136,6 @@ function apiRegisterNewUser(&$encoded_request) {
 		$response['errors'][] = 'Failed to register user';
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
-
-	return $response;
 }
 
 
@@ -151,24 +143,16 @@ function apiRegisterNewUser(&$encoded_request) {
 /*
  * Update the current user's information.
  */
-function apiUpdateUserInfo(&$encoded_request) {
-	$response = getAPIResponseTemplate();
+function apiUpdateUserInfo(&$request, &$response) {
 	$valid_input = true;
 
 
 	// Make sure user is authenticated
 	if (!$requester_id = isAuthenticated($response)) {
-		return $response;
+		return;
 	}
 
 
-	// Decode request
-	// NOTE(sdsmith): makes assumption it's a json request
-	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		return $response;
-	}
-
-	// TODO(sdsmith): verifiy input
 	/***** Verify input *****/
 	// Check current email and password are provided
 	if (!parameterExists($request, 'current_email') 
@@ -176,7 +160,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	{
 		$response['errors'][] = 'Current email and password not provided';
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	/*** Check each parameter's value ***/
@@ -237,7 +221,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	// Confirm valid input
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	/*** Check that duplicate entries won't exist in db after update ***/
@@ -255,7 +239,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 	// Confirm no suplicates on insert
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $resposne;
+		return;
 	}
 
 	// Validate user provided credentials
@@ -268,7 +252,7 @@ function apiUpdateUserInfo(&$encoded_request) {
 		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
-		return $response;
+		return;
 	}
 
 	// Update user information
@@ -279,8 +263,6 @@ function apiUpdateUserInfo(&$encoded_request) {
 		$response['errors'][] = 'Could not update information';
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
-
-	return $response;
 }
 
 
@@ -288,20 +270,13 @@ function apiUpdateUserInfo(&$encoded_request) {
 /*
  * Get dump of the current user's information.
  */
-function apiGetUserInfo(&$encoded_request) {
-	$response = getAPIResponseTemplate();
+function apiGetUserInfo(&$request, &$reponse) {
 	$valid_input = true;
 
 	// Make sure user is authenticated
 	if (!$requester_id = isAuthenticated($response)) {
-		return $response;
+		return;
 	}
-
-	// Decode request
-	// NOTE(sdsmith): makes assumption it's a json request
-	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		return $response;
-	}	
 
 	// Verify input
 	// Email	
@@ -324,7 +299,7 @@ function apiGetUserInfo(&$encoded_request) {
 	// Confirm input is valid
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	// Validate user provided credentials to get user info
@@ -336,15 +311,13 @@ function apiGetUserInfo(&$encoded_request) {
 		// credentials. Bad user.
 		$response['errors'][] = 'Invalid credentials';
 		$response['status'] = STATUS_UNAUTHORIZED;
-		return $response;
+		return;
 	}
 
 	// Set information
 	unset($user_info['id']);	// do not give the user their own id
 	$response['user_info'] = $user_info;
 	$response['status'] = STATUS_OK;
-
-	return $response;
 }
 
 
@@ -360,26 +333,39 @@ function apiGetUserInfo(&$encoded_request) {
 
 // Decode HTTP request type and get request parameters
 $REQUEST_VARS = null;
-$response = null;
+$request = null;
+$response = getAPIResponseTemplate();
+
+// Get request parameters and execute request
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
+		// Decode request
 		$REQUEST_VARS = &$_POST;
-		$response = apiRegisterNewUser($REQUEST_VARS['request']);
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+			apiRegisterNewUser($request, $response);
+		}
 		break;
 
 	case 'PUT':
+		// Decode request
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
-		$response = apiUpdateUserInfo($REQUEST_VARS['request']);
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+			apiUpdateUserInfo($request, $response);
+		}
 		break;
 
 	case 'GET':
-		// Decode request
+		// get parameters
 		if (isset($_REQUEST['request'])) {
 			$REQUEST_VARS = &$_REQUEST;
 		} else {
 			parse_str(file_get_contents("php://input"), $REQUEST_VARS);
 		}
-		$response = apiGetUserInfo($REQUEST_VARS['request']);
+
+		// Decode request
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+			apiGetUserInfo($request , $response);
+		}
 		break;
 
 	default:

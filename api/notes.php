@@ -267,7 +267,7 @@ function apiVoteNote(&$request, &$response) {
 
 // Decode HTTP request type and decode request parameters
 $REQUEST_VARS = null;
-$resquest = null;
+$request = null;
 $response = getAPIResponseTemplate();
 
 // Get request parameters and execute request
