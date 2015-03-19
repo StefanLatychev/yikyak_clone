@@ -14,21 +14,14 @@ require_once("../models/database/authentication.php");
  * Only accepts username and password from POST requests.
  * Sets an api_session_key cookie on user's system.
  */
-function apiLogin($encoded_request) {
-	$response = getAPIResponseTemplate();
+function apiLogin(&$request, &$response) {
 	$valid_input = true;
-
-	// Decode request
-	// NOTE(sdsmith): makes the assumption it's a json request
-	if (!$request = requestDecodeJSON($encoded_request, $response)) {
-		return $response;
-	}
 
 	// Check if username and password provided
 	if (!parameterExists($request, "email") || !parameterExists($request, "password")) {
 		$response['errors'][] = 'Full credentials not provided';
 		$response['status'] = STATUS_UNAUTHORIZED;
-		return $response;
+		return;
 	}
 
 	// Verify input
@@ -46,7 +39,7 @@ function apiLogin($encoded_request) {
 	// Stop processing request if there exists invalid input
 	if (!$valid_input) {
 		$response['status'] = STATUS_BAD_REQUEST;
-		return $response;
+		return;
 	}
 
 	// Authenticate user
@@ -58,7 +51,7 @@ function apiLogin($encoded_request) {
 				if(!dbRemoveSessionKey($active_keys[$i]['session_key'])) {
 					$response['errors'][] = 'Failed to complete request';
 					$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
-					return $response;
+					return;
 				}
 			}
 		}
@@ -86,8 +79,6 @@ function apiLogin($encoded_request) {
 		$response['errors'][] = "Invalid credentials";
 		$response['status'] = STATUS_UNAUTHORIZED;
 	}
-
-	return $response;
 }
 
 
@@ -97,13 +88,12 @@ function apiLogin($encoded_request) {
  * object.
  * Invalidates user's api_session_key cookie.
  */
-function apiLogout() {
-	$response = getAPIResponseTemplate();
+function apiLogout(&$request, &$response) {
 	$session_key = getRequesterAPISessionKey($response);
 
 	// Confirm session key is provided
 	if (!$session_key) {
-		return $response;
+		return;
 	}
 
 	// Invalidate cookie from user
@@ -117,8 +107,6 @@ function apiLogout() {
 		$response['errors'][] = "Failed to logout";
 		$response['status'] = STATUS_INTERNAL_SERVER_ERROR;
 	}
-
-	return $response;
 }
 
 
@@ -134,17 +122,26 @@ function apiLogout() {
 
 // Decode HTTP request type and get request parameters
 $REQUEST_VARS = null;
+$request = null;
 $response = null;
+
+
+// TODO(sdsmith): Check that 'request' is set for each call
+// Get request parameters and execute request
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		$REQUEST_VARS = &$_POST;
-		$response = apiLogin($REQUEST_VARS['request']);
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+			apiLogin($request, $response);
+		}
 		break;
 
 	case 'DELETE':
 		// http://www.lornajane.net/posts/2008/Accessing-Incoming-PUT-Data-from-PHP
 		parse_str(file_get_contents("php://input"), $REQUEST_VARS);
-		$response = apiLogout();
+		if ($request = requestDecodeJSON($REQUEST_VARS['request'], $response)) {
+			apiLogout($request, $response);
+		}
 		break;
 
 	default:

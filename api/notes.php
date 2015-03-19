@@ -270,7 +270,7 @@ $REQUEST_VARS = null;
 $resquest = null;
 $response = getAPIResponseTemplate();
 
-// Get request parameters
+// Get request parameters and execute request
 switch($_SERVER['REQUEST_METHOD']) {
 	case 'POST':
 		// Decode request
