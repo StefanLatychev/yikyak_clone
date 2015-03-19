@@ -7,12 +7,18 @@ define('GEO_LOCAL_RADIUS', 0.01); // ~1.11km latitude and longitude
 
 
 
+function dbGetNote($note_id) {
+	// TODO(sdsmith):
+}
+
+
 /*
  * Return array of all notes in your the given area, with a maximum array length
  * of maxnotes. If timestamp is provided, getForwardInTime must also be
  * provided.
  * Note that it searches location areas in a square.
  */
+// TODO(sdsmith): add minimum_note_id param
 function dbGetLocalNotes(	$maxnotes,
 				$latitude, 
 				$longitude,
@@ -60,6 +66,7 @@ function dbGetLocalNotes(	$maxnotes,
  * Same as dbGetLocalNotes, but only considers the time a note was posted, not
  * the location.
  */
+// TODO(sdsmith): add minimum_note_id param
 function dbGetWorldwideNotes(	$maxnotes,
 				$timestamp = null,
 				$getForwardInTime = null) {
