@@ -44,15 +44,15 @@ function isAuthenticated(&$response=null) {
 	}
 
 	// Check if active key
-	$user_id = dbActiveSessionKey($session_key)['user_id'];
+	$key_row = dbActiveSessionKey($session_key);
 		
 
-	if (!$user_id && $response) {
+	if (!$key_row && $response) {
 		$response['errors'][] = 'Not authenticated';
 		$response['status'] = STATUS_UNAUTHORIZED;
 	}
 
-	return $user_id;
+	return $key_row['user_id'];
 }
 
 
